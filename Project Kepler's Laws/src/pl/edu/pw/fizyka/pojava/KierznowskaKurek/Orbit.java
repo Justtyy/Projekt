@@ -8,16 +8,24 @@ public class Orbit {
 	double semimajorAxis;
 	double semiminorAxis;
 	double eccentricity;
+	int panelHeight;
+	int panelWidth;
 	
-	public Orbit(double majorAxis,double minorAxis, double ecc) {
+	public Orbit(double majorAxis,double minorAxis, double ecc, int panelH, int panelW) {
 		semimajorAxis = majorAxis;
 		semiminorAxis = minorAxis;
 		eccentricity = ecc;
+		int intMinorAxis = (int)minorAxis;//potrzebne żeby użyć niżej do panelHeight
+		int intMajorAxis = (int)majorAxis;//potrzebne żeby użyć niżej do panelWidth
+		panelHeight = ((panelH/2)-(intMinorAxis/2));
+		panelWidth = ((panelW/2)-(intMajorAxis/2));
+		
 		
 	}
 
 	public void paint(Graphics g) {
-		g.drawOval(100, 100, (int)semimajorAxis, (int)semiminorAxis);
+		
+		g.drawOval(panelWidth, panelHeight, (int)semimajorAxis, (int)semiminorAxis);
 		
 	}	
 }

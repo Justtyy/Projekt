@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 
 import javax.swing.JPanel;
 
@@ -15,10 +16,6 @@ public class SimulationField extends JPanel{
 	double eccentricity;
 	
 	public SimulationField(Orbit o) {
-		//semimajorAxis = majorAxis;
-		//semiminorAxis = minorAxis;
-		//eccentricity = ecc;
-	
 		orbit = o;
 	}
 	  public void paintComponent(Graphics g) {

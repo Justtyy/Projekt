@@ -66,7 +66,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 1;
         this.add(eccentricityValueField, gridBagConstraints);
       	
-        JSlider eccentricityValueSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        JSlider eccentricityValueSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 1);
         eccentricityValueSlider.setMajorTickSpacing(10);
         eccentricityValueSlider.setMinorTickSpacing(1);
         gridBagConstraints.gridx = 0;
@@ -77,7 +77,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         this.add(eccentricityValueSlider, gridBagConstraints);
         eccentricityValueSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
-				eccentricityValue = ((eccentricityValueSlider.getValue()));
+				eccentricityValue =(double)((eccentricityValueSlider.getValue()));
 				String stringEccentricityValue = String.valueOf(eccentricityValue);
 				eccentricityValueField.setText(stringEccentricityValue);
 				semiminorAxisValue =(double) Math.sqrt((semimajorAxisValue*semimajorAxisValue)-(eccentricityValue*eccentricityValue)); //obliczanie malej pólosi
@@ -119,7 +119,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 0.1;	
         semimajorAxisValueSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
-				semimajorAxisValue = (semimajorAxisValueSlider.getValue());
+				semimajorAxisValue = (double)(semimajorAxisValueSlider.getValue());
 				String stringsemimajorAxisValue = String.valueOf(semimajorAxisValue);
 				semimajorAxisValueField.setText(stringsemimajorAxisValue+"AU");
 				semiminorAxisValue =(double) Math.sqrt((semimajorAxisValue*semimajorAxisValue)-(eccentricityValue*eccentricityValue)); //obliczanie malej pólosi

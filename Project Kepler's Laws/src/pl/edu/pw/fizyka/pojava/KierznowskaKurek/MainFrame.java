@@ -10,12 +10,8 @@ import javax.swing.border.Border;
 
 public class MainFrame extends JFrame {
 	
-	
-	//int semimajorAxis;
-	//int eccentricity;
-	//int semiminorAxis;
 	Orbit orbit;
-	
+	int panelHeight, panelWidth;
 
 	JPanel leftPanel, settingsPanel, topPanel, simulationActionPanel; //main panels
 	JPanel settingsCenterPanel;
@@ -69,6 +65,7 @@ public class MainFrame extends JFrame {
 		leftPanel.add(simulationActionPanel = new JPanel());
 		simulationActionPanel.setBorder(grayLine);
 		simulationActionPanel.setLayout(new BorderLayout());
+		
 		
 		
 		settingsPanel.setLayout(new BorderLayout());
@@ -131,11 +128,13 @@ public class MainFrame extends JFrame {
 		ActionListener startStopButtonActionListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(SpecialLayoutWithSlidersPanel.semimajorAxisValue);
-				orbit = new Orbit(SpecialLayoutWithSlidersPanel.semimajorAxisValue, SpecialLayoutWithSlidersPanel.semiminorAxisValue, SpecialLayoutWithSlidersPanel.eccentricityValue);
-				simulationField = new SimulationField(orbit);
+				panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
+				panelWidth = simulationActionPanel.getWidth();//to też
+				orbit = new Orbit(SpecialLayoutWithSlidersPanel.semimajorAxisValue, SpecialLayoutWithSlidersPanel.semiminorAxisValue, SpecialLayoutWithSlidersPanel.eccentricityValue, panelHeight, panelWidth);
+				simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
 				simulationActionPanel.add(simulationField, BorderLayout.CENTER);
-				repaint();
+				
+				repaint();//repaint jest wstawiony w trzech miejscach, bo jeszcze jest przy sliderach ale tak naprawde nie wiem gdzie powinien być to narazie zostawiłam wszytskie
 			}
 		};
 	    startStopButton.addActionListener(startStopButtonActionListener);
