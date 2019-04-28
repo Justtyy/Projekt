@@ -14,17 +14,17 @@ public class SimulationField extends JPanel{
 	double semiminorAxis;
 	double eccentricity;
 	
-	public SimulationField(double majorAxis,double minorAxis, double ecc) {
-		semimajorAxis = majorAxis;
-		semiminorAxis = minorAxis;
-		eccentricity = ecc;
+	public SimulationField(Orbit o) {
+		//semimajorAxis = majorAxis;
+		//semiminorAxis = minorAxis;
+		//eccentricity = ecc;
 	
-		orbit = new Orbit(semimajorAxis,semiminorAxis,eccentricity);
+		orbit = o;
 	}
 	  public void paintComponent(Graphics g) {
 	        super.paintComponent(g); 
 	        orbit.paint(g);
-	        repaint();
+	       
 	  }
 	
 	

@@ -1,6 +1,9 @@
 package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -8,9 +11,9 @@ import javax.swing.border.Border;
 public class MainFrame extends JFrame {
 	
 	
-	int semimajorAxis;
-	int eccentricity;
-	int semiminorAxis;
+	//int semimajorAxis;
+	//int eccentricity;
+	//int semiminorAxis;
 	Orbit orbit;
 	
 
@@ -45,9 +48,6 @@ public class MainFrame extends JFrame {
 		leftPanel = new JPanel();
 		topPanel= new JPanel();
 		settingsPanel = new JPanel();
-		simulationField = new SimulationField(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), 
-		SpecialLayoutWithSlidersPanel.giveEccentricity(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis());
-		//teoretycznie tu sie powinno cos zadziac, ale nic sie nie dzieje 
 		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	    splitPane.setLeftComponent(leftPanel);
@@ -69,9 +69,6 @@ public class MainFrame extends JFrame {
 		leftPanel.add(simulationActionPanel = new JPanel());
 		simulationActionPanel.setBorder(grayLine);
 		simulationActionPanel.setLayout(new BorderLayout());
-		simulationActionPanel.add(simulationField, BorderLayout.CENTER);
-		orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), 
-		SpecialLayoutWithSlidersPanel.giveEccentricity(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis());
 		
 		
 		settingsPanel.setLayout(new BorderLayout());
@@ -128,7 +125,20 @@ public class MainFrame extends JFrame {
 		colorListPanel.add(okColorButton = new JButton("OK"));
 		okColorButton.setToolTipText("Potwierdz wybór motywu animacji");
 		
+		
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
+		
+		ActionListener startStopButtonActionListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(SpecialLayoutWithSlidersPanel.semimajorAxisValue);
+				orbit = new Orbit(SpecialLayoutWithSlidersPanel.semimajorAxisValue, SpecialLayoutWithSlidersPanel.semiminorAxisValue, SpecialLayoutWithSlidersPanel.eccentricityValue);
+				simulationField = new SimulationField(orbit);
+				simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+				repaint();
+			}
+		};
+	    startStopButton.addActionListener(startStopButtonActionListener);
 
 	} 
 	 
