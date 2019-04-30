@@ -17,15 +17,14 @@ public class Orbit {
 		eccentricity = ecc;
 		int intMinorAxis = (int)minorAxis;//potrzebne żeby użyć niżej do panelHeight
 		int intMajorAxis = (int)majorAxis;//potrzebne żeby użyć niżej do panelWidth
-		panelHeight = ((panelH/2)-(intMinorAxis/2));
-		panelWidth = ((panelW/2)-(intMajorAxis/2));
+		panelHeight = ((panelH/2)-(intMinorAxis));
+		panelWidth = ((panelW/2)-(intMajorAxis));
 		
 		
 	}
 
 	public void paint(Graphics g) {
 		
-		g.drawOval(panelWidth, panelHeight, (int)semimajorAxis, (int)semiminorAxis);
-		
-	}	
+		g.drawOval(panelWidth, panelHeight,(int)(2*semimajorAxis), (int)(2*semiminorAxis));
+	}
 }
