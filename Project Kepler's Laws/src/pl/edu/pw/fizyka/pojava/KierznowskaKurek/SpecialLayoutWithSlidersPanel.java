@@ -13,7 +13,8 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 	static double eccentricityValue = 0;
 	static double semimajorAxisValue = 0.1;
 	static double semiminorAxisValue= 0.1;
-	
+	JSlider eccentricityValueSlider, semimajorAxisValueSlider;
+	JLabel semiminorAxisValueField,semimajorAxisValueField,eccentricityValueField;
 	
 	public SpecialLayoutWithSlidersPanel() {
 	
@@ -35,7 +36,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         this.add(orbitsParametersLabel, gridBagConstraints);   
         
         
-        JLabel semiminorAxisValueField = new JLabel("0.1AU");//etykieta z wartoscia malej polosi, uzupelniona pozniej(w sliderach na biezaco)
+        semiminorAxisValueField = new JLabel("0.1AU");//etykieta z wartoscia malej polosi, uzupelniona pozniej(w sliderach na biezaco)
         semiminorAxisValueField.setPreferredSize(new Dimension(100, 20));
         semiminorAxisValueField.setBackground(Color.white);
         semiminorAxisValueField.setOpaque(true);	
@@ -56,7 +57,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 1;
         this.add(eccentricityLabel, gridBagConstraints);
  
-        JLabel eccentricityValueField = new JLabel("0.0");//wartosc mimosrodu pobierana na biezaco ze slidera
+        eccentricityValueField = new JLabel("0.0");//wartosc mimosrodu pobierana na biezaco ze slidera
         eccentricityValueField.setPreferredSize(new Dimension(100, 20));
         eccentricityValueField.setBackground(Color.white);
         eccentricityValueField.setOpaque(true);
@@ -68,7 +69,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 1;
         this.add(eccentricityValueField, gridBagConstraints);
       	
-        JSlider eccentricityValueSlider = new JSlider(JSlider.HORIZONTAL, 0, 999, 0);
+        eccentricityValueSlider = new JSlider(JSlider.HORIZONTAL, 0, 999, 0);
         eccentricityValueSlider.setMajorTickSpacing(10);
         eccentricityValueSlider.setMinorTickSpacing(1);
         gridBagConstraints.gridx = 0;
@@ -81,15 +82,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         eccentricityValueSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				eccentricityValue = eccentricityValueSlider.getValue();
-				//double AuxiliaryEccentricityValue = (eccentricityValueSlider.getValue());//pomocnicza wartosc, dzieki ktorej jest lepsza dokladnosc slidera 
-//				String stringEccentricityValue = String.valueOf(AuxiliaryEccentricityValue/1000);
-//				eccentricityValueField.setText(stringEccentricityValue);
-//				semiminorAxisValue = Math.sqrt(1-((eccentricityValue)*(eccentricityValue)))*(semimajorAxisValue); //obliczanie malej pólosi
-//				NumberFormat formatter = new DecimalFormat("#0.000");//format dla double do trzech miejsc po przecinku
-//				String stringSemiminorAxisValue = formatter.format(semiminorAxisValue);
-//				semiminorAxisValueField.setText(eccentricityValue+"AU");
-//				//semiminorAxisValueField.setText(stringSemiminorAxisValue+"AU");
-//				repaint();
+				semimajorAxisValue =semimajorAxisValueSlider.getValue();
 				NumberFormat formatter = new DecimalFormat("#0.000");//format dla double do trzech miejsc po przecinku
 				String stringEccentricityValue = formatter.format(eccentricityValue/1000);
 				eccentricityValueField.setText(stringEccentricityValue);
@@ -109,7 +102,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 1;
         this.add(semimajorAxisLabel, gridBagConstraints);
         
-        JLabel semimajorAxisValueField = new JLabel("0.1AU");//wartosc wielkiej polosi pobierana na biezaco ze slidera
+        semimajorAxisValueField = new JLabel("0.1AU");//wartosc wielkiej polosi pobierana na biezaco ze slidera
         semimajorAxisValueField.setPreferredSize(new Dimension(100, 20));
         semimajorAxisValueField.setBackground(Color.white);
         semimajorAxisValueField.setOpaque(true);
@@ -121,20 +114,18 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 1;
         this.add(semimajorAxisValueField, gridBagConstraints);
    	
-        JSlider semimajorAxisValueSlider = new JSlider(JSlider.HORIZONTAL, 100, 100000, 100);
+       semimajorAxisValueSlider = new JSlider(JSlider.HORIZONTAL, 100, 100000, 100);
         //1 AU = 1,495978707×10^11 m
-        //semimajorAxisValueSlider.setMajorTickSpacing(1);
-        //semimajorAxisValueSlider.setMinorTickSpacing(1);
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
 		gridBagConstraints.gridwidth = 2;
 		gridBagConstraints.gridheight = 1;
-        gridBagConstraints.weighty = 0.1;	
+        gridBagConstraints.weighty = 0.1;
         //Akcja dla slidera dla wielkiej polosi (powinno byc od 0,1 do 100AU)
         semimajorAxisValueSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
+				eccentricityValue = eccentricityValueSlider.getValue();
 				semimajorAxisValue =semimajorAxisValueSlider.getValue();
-				//double AuxiliarySemimajorAxisValue = semimajorAxisValueSlider.getValue();//pomocnicza wartosc, dzieki ktorej jest lepsza dokladnosc slidera 
 				NumberFormat formatter = new DecimalFormat("#0.000");//format dla double do trzech miejsc po przecinku
 				String stringSemimajorValue = formatter.format(semimajorAxisValue/1000);
 				semimajorAxisValueField.setText(stringSemimajorValue+"AU");
@@ -160,7 +151,6 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
  
  
 	}
-
 	public static double giveEccentricity() {
 		return eccentricityValue/1000;
 	}
