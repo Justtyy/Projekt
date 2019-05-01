@@ -3,6 +3,8 @@ package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -125,22 +127,37 @@ public class MainFrame extends JFrame {
 		
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
 		
-		ActionListener startStopButtonActionListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
-				panelWidth = simulationActionPanel.getWidth();//to też
-				orbit = new Orbit(SpecialLayoutWithSlidersPanel.semimajorAxisValue, SpecialLayoutWithSlidersPanel.semiminorAxisValue, SpecialLayoutWithSlidersPanel.eccentricityValue, panelHeight, panelWidth);
-				simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
-				simulationActionPanel.add(simulationField, BorderLayout.CENTER);
-				
-				repaint();//repaint jest wstawiony w trzech miejscach, bo jeszcze jest przy sliderach ale tak naprawde nie wiem gdzie powinien być to narazie zostawiłam wszytskie
-			}
-		};
+		
 	    startStopButton.addActionListener(startStopButtonActionListener);
-
+	    startStopButton.addActionListener(distanceToSunListener);
 	} 
-	 
+	ActionListener startStopButtonActionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
+			panelWidth = simulationActionPanel.getWidth();//to też
+			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
+			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
+			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+			
+			repaint();
+		}
+	};
+	//actionlistener ustawiajacy odleglosci planety od Słońca, dodany do startStopButton
+	ActionListener distanceToSunListener = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			NumberFormat formatter = new DecimalFormat("#0.000");//format dla double do trzech miejsc po przecinku
+			
+			double maxDistanceToSunValue = SpecialLayoutWithSlidersPanel.giveSemimajorAxis()*(1+SpecialLayoutWithSlidersPanel.giveEccentricity());
+			String stringMaxDistanceToSun = formatter.format(maxDistanceToSunValue);
+			maxDistanceToSun.setText(stringMaxDistanceToSun+"AU");
+			
+			double minDistanceToSunValue = SpecialLayoutWithSlidersPanel.giveSemimajorAxis()*(1-SpecialLayoutWithSlidersPanel.giveEccentricity());
+			String stringMinDistanceToSun = formatter.format(minDistanceToSunValue);
+			minDistanceToSun.setText(stringMinDistanceToSun+"AU");
+		
+		}
+	};
     public static void main(String[] a) {
     	MainFrame frame = new MainFrame();
     	frame.setVisible(true);
