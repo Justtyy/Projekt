@@ -10,7 +10,7 @@ public class Orbit {
 	double eccentricity;
 	int panelHeight;
 	int panelWidth;
-	int showAxis;
+	int showAxis, showOrbit;
 	int semiminorAxisStartX;
 	int semiminorAxisStartY;
 	int semiminorAxisEndX;
@@ -43,9 +43,15 @@ public class Orbit {
 		showAxis = i;
 	}
 
+	public void ifShowOrbit(int i) {
+		showOrbit = i;
+	}
+	
 	public void paint(Graphics g) {
 		
+		if (showOrbit == 1) {
 		g.drawOval(panelWidth, panelHeight,(int)(2*semimajorAxis), (int)(2*semiminorAxis));
+		}
 		if (showAxis == 1) {
 			g.drawLine(semimajorAxisStartX, semimajorAxisStartY, semimajorAxisEndX, semimajorAxisEndY);
 			g.drawLine(semiminorAxisStartX, semiminorAxisStartY, semiminorAxisEndX, semiminorAxisEndY);

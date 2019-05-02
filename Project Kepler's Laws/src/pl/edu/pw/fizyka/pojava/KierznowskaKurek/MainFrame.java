@@ -14,7 +14,7 @@ public class MainFrame extends JFrame {
 	
 	Orbit orbit;
 	int panelHeight, panelWidth;
-	int showAxisValue;
+	int showAxisValue, showOrbitValue;
 
 	JPanel leftPanel, settingsPanel, topPanel, simulationActionPanel; //main panels
 	JPanel settingsCenterPanel;
@@ -117,6 +117,7 @@ public class MainFrame extends JFrame {
 		radioButtonPanel.add(showOrbit = new JRadioButton("Wyświetl orbitę"));
 		radioButtonPanel.add(showAxis = new JRadioButton("Wyświetl osie elipsy"));
 		showAxis.addActionListener(showAxisListener);
+		showOrbit.addActionListener(showOrbitListener);
 		
 		//List with colors and motives 
 		colorList = new JComboBox(colorStrings);
@@ -166,6 +167,15 @@ public class MainFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			showAxisValue = 1;
 			orbit.ifShowAxis(showAxisValue);
+			repaint();
+		}
+	};
+	
+	ActionListener showOrbitListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			showOrbitValue = 1;
+			orbit.ifShowOrbit(showOrbitValue);
 			repaint();
 		}
 	};
