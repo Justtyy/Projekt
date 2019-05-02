@@ -18,7 +18,7 @@ public class MainFrame extends JFrame {
 
 	JPanel leftPanel, settingsPanel, topPanel, simulationActionPanel; //main panels
 	JPanel settingsCenterPanel;
-	JPanel choosePlanetPanel, orbitsParametersPanel, distanceToSunPanel, animationsActionsPanel, radioButtonPanel, colorListPanel;
+	JPanel choosePlanetPanel, orbitsParametersPanel, distanceToSunPanel, animationsActionsPanel, checkBoxPanel, colorListPanel;
 	JPanel distanceLabelPanel, maxDistancePanel, minDistancePanel;
 	final JSplitPane splitPane;
 	JButton savePlanet, startStopButton;
@@ -28,7 +28,7 @@ public class MainFrame extends JFrame {
 	String[] colorStrings = {"Wybierz motyw symulacji", "Dzieñ", "Noc"};
 	JComboBox planetList, colorList;
 	JButton okPlanetButton, okColorButton;
-	JRadioButton showOrbit, showAxis;
+	JCheckBox showOrbit, showAxis;
 	JLabel minDistanceToSun, maxDistanceToSun;//values
 	Border blackLine, grayLine;
 	SimulationField simulationField;
@@ -113,11 +113,12 @@ public class MainFrame extends JFrame {
 		//Radio buttons about which elements user want to see
 		animationsActionsPanel.setLayout(new GridLayout(3,1));
 		animationsActionsPanel.setPreferredSize(new Dimension(100, 160));
-		animationsActionsPanel.add(radioButtonPanel = new JPanel());
-		radioButtonPanel.add(showOrbit = new JRadioButton("Wyświetl orbitę"));
-		radioButtonPanel.add(showAxis = new JRadioButton("Wyświetl osie elipsy"));
+		animationsActionsPanel.add(checkBoxPanel = new JPanel());
+		checkBoxPanel.add(showOrbit = new JCheckBox("Wyświetl orbitę"));
+		checkBoxPanel.add(showAxis = new JCheckBox("Wyświetl osie elipsy"));
 		showAxis.addActionListener(showAxisListener);
 		showOrbit.addActionListener(showOrbitListener);
+		
 		
 		//List with colors and motives 
 		colorList = new JComboBox(colorStrings);
@@ -165,16 +166,30 @@ public class MainFrame extends JFrame {
 	ActionListener showAxisListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			showAxisValue = 1;
+			boolean selection = showAxis.isSelected();
+			if(selection == true) {
+				showAxisValue = 1;
+			}
+			else if(selection == false){
+				showAxisValue = 0;
+			}
 			orbit.ifShowAxis(showAxisValue);
 			repaint();
+			
+			
 		}
 	};
 	
 	ActionListener showOrbitListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			showOrbitValue = 1;
+			boolean selection = showOrbit.isSelected();
+			if(selection == true) {
+				showOrbitValue = 1;
+			}
+			else if(selection == false){
+				showOrbitValue = 0;
+			}
 			orbit.ifShowOrbit(showOrbitValue);
 			repaint();
 		}
