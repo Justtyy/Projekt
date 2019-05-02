@@ -1,6 +1,7 @@
 package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -11,19 +12,16 @@ public class Orbit {
 	int panelHeight;
 	int panelWidth;
 	int showAxis, showOrbit;
-	int semiminorAxisStartX;
-	int semiminorAxisStartY;
-	int semiminorAxisEndX;
-	int semiminorAxisEndY;
-	int semimajorAxisStartX;
-	int semimajorAxisStartY;
-	int semimajorAxisEndX;
-	int semimajorAxisEndY;
+	int semiminorAxisStartX, semiminorAxisStartY, semiminorAxisEndX, semiminorAxisEndY;
+	int semimajorAxisStartX, semimajorAxisStartY, semimajorAxisEndX, semimajorAxisEndY;
+	int sunPositionX, sunPositionY;
+	int focusDistanceFromTheSun;
 	
 	public Orbit(double majorAxis,double minorAxis, double ecc, int panelH, int panelW) {
 		semimajorAxis = majorAxis;
 		semiminorAxis = minorAxis;
 		eccentricity = ecc;
+		int intEccentricity = (int)eccentricity;
 		int intMinorAxis = (int)minorAxis;//potrzebne żeby użyć niżej do panelHeight
 		int intMajorAxis = (int)majorAxis;//potrzebne żeby użyć niżej do panelWidth
 		panelHeight = ((panelH/2)-(intMinorAxis));
@@ -36,6 +34,9 @@ public class Orbit {
 		semiminorAxisStartY = ((panelH/2)+(intMinorAxis));
 		semiminorAxisEndX = (panelW/2);
 		semiminorAxisEndY = ((panelH/2)-(intMinorAxis));
+		focusDistanceFromTheSun =(int) (Math.sqrt((intMajorAxis*intMajorAxis)-(intMinorAxis*intMinorAxis)));
+		sunPositionX = ((panelW/2)-focusDistanceFromTheSun-5);
+		sunPositionY = ((panelH/2)-5);
 		
 	}
 	
@@ -48,6 +49,10 @@ public class Orbit {
 	}
 	
 	public void paint(Graphics g) {
+		
+		g.setColor(Color.YELLOW);
+		g.fillOval(sunPositionX, sunPositionY, 10, 10);
+		g.setColor(Color.BLACK);
 		
 		if (showOrbit == 1) {
 		g.drawOval(panelWidth, panelHeight,(int)(2*semimajorAxis), (int)(2*semiminorAxis));
