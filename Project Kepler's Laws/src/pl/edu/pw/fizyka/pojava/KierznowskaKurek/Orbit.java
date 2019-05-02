@@ -50,7 +50,8 @@ public class Orbit {
 	
 	public void paint(Graphics g) {
 		
-		g.setColor(Color.YELLOW);
+		Color sunColor = new Color(255, 207, 0);
+		g.setColor(sunColor);
 		g.fillOval(sunPositionX, sunPositionY, 10, 10);
 		g.setColor(Color.BLACK);
 		
