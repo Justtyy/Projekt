@@ -62,7 +62,6 @@ public class Orbit {
 			g.drawLine(semimajorAxisStartX, semimajorAxisStartY, semimajorAxisEndX, semimajorAxisEndY);
 			g.drawLine(semiminorAxisStartX, semiminorAxisStartY, semiminorAxisEndX, semiminorAxisEndY);
 		}
-		
 			
 	}
 }

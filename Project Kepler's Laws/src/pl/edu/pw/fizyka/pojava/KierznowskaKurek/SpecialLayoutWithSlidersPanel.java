@@ -148,8 +148,6 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 2;
         this.add(semiminorAxisLabel, gridBagConstraints);
 
- 
- 
 	}
 	public static double giveEccentricity() {
 		return eccentricityValue/1000;
