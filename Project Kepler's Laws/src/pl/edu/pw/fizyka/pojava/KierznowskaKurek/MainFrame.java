@@ -208,8 +208,7 @@ public class MainFrame extends JFrame {
 				maxDistancePanel.setBackground(Color.white);
 				minDistancePanel.setBackground(Color.white);
 				orbitsParametersPanel.setBackground(Color.white);
-				simulationField.setBackground(Color.white);
-				
+				simulationField.setBackground(Color.white);	
 			}
 			if(motive==2) {
 				topPanel.setBackground(Color.black);
