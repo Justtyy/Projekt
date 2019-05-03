@@ -203,8 +203,8 @@ public class MainFrame extends JFrame {
 				maxDistancePanel.setBackground(Color.white);
 				minDistancePanel.setBackground(Color.white);
 				orbitsParametersPanel.setBackground(Color.white);
-				simulationField.setBackground(Color.white);
-				
+				simulationField.setBackground(Color.white);	
+
 			}
 			if(motive==2) {
 				topPanel.setBackground(Color.black);
@@ -221,7 +221,9 @@ public class MainFrame extends JFrame {
 			}
 		}
 	};
-	public static void main(String[] a) {
+	
+	
+    public static void main(String[] a) {
     	MainFrame frame = new MainFrame();
     	frame.setVisible(true);
     	frame.splitPane.setDividerLocation(0.66);
