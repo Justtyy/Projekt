@@ -224,6 +224,20 @@ public class MainFrame extends JFrame {
 				orbitsParametersPanel.setBackground(Color.black);
 				simulationField.setBackground(Color.black);
 			}
+			if(motive==0) {
+				topPanel.setBackground(new Color(215,215,215));
+				simulationActionPanel.setBackground(new Color(215,215,215));
+				distanceToSunPanel.setBackground(new Color(215,215,215));
+				choosePlanetPanel.setBackground(new Color(215,215,215));
+				checkBoxPanel.setBackground(new Color(215,215,215));
+				colorListPanel.setBackground(new Color(215,215,215));
+				distanceLabelPanel.setBackground(new Color(215,215,215));
+				maxDistancePanel.setBackground(new Color(215,215,215));
+				minDistancePanel.setBackground(new Color(215,215,215));
+				orbitsParametersPanel.setBackground(new Color(215,215,215));
+				simulationField.setBackground(new Color(215,215,215));
+			}
+			
 		}
 	};
 	
