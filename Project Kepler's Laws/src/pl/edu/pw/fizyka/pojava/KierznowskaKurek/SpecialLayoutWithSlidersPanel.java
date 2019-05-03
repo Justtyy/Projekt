@@ -139,7 +139,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 		});
         this.add(semimajorAxisValueSlider, gridBagConstraints);
           
-        JLabel semiminorAxisLabel = new JLabel("D³ugoœæ ma³ej pó³osi:");
+        JLabel semiminorAxisLabel = new JLabel("D³ugoœæ ma³ej pó³ósi:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
 		gridBagConstraints.gridwidth = 1;
@@ -161,6 +161,4 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 		return semiminorAxisValue;
 	}
 	
-}                             
-
-                            
+} 

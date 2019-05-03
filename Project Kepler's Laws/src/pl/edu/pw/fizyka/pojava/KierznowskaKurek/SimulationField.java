@@ -11,7 +11,10 @@ import javax.swing.JPanel;
 public class SimulationField extends JPanel{
 
 	Orbit orbit;
-
+	double semimajorAxis;
+	double semiminorAxis;
+	double eccentricity;
+	
 	public SimulationField(Orbit o) {
 		orbit = o;
 	}
