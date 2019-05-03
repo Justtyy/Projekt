@@ -223,7 +223,6 @@ public class MainFrame extends JFrame {
 				orbitsParametersPanel.setBackground(Color.black);
 				simulationField.setBackground(Color.black);
 			}
-			
 		}
 	};
 
