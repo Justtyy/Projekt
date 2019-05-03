@@ -1,21 +1,16 @@
 package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
 import javax.swing.*;
 import javax.swing.border.Border;
-
-
 public class MainFrame extends JFrame {
 	
 	Orbit orbit;
 	int panelHeight, panelWidth;
 	int showAxisValue, showOrbitValue;
-
 	JPanel leftPanel, settingsPanel, topPanel, simulationActionPanel; //main panels
 	JPanel settingsCenterPanel;
 	JPanel choosePlanetPanel, orbitsParametersPanel, distanceToSunPanel, animationsActionsPanel, checkBoxPanel, colorListPanel;
@@ -127,7 +122,7 @@ public class MainFrame extends JFrame {
 		colorListPanel.add(colorList); 
 		colorListPanel.add(okColorButton = new JButton("OK"));
 		okColorButton.setToolTipText("Potwierdz wybór motywu animacji");
-		
+		okColorButton.addActionListener(chooseMotive);
 		
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
 		
@@ -194,12 +189,43 @@ public class MainFrame extends JFrame {
 			repaint();
 		}
 	};
-
-	
-    public static void main(String[] a) {
+	ActionListener chooseMotive = new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			int motive = colorList.getSelectedIndex();
+			if(motive==1) {
+				topPanel.setBackground(Color.white);
+				simulationActionPanel.setBackground(Color.white);
+				distanceToSunPanel.setBackground(Color.white);
+				choosePlanetPanel.setBackground(Color.white);
+				checkBoxPanel.setBackground(Color.white);
+				colorListPanel.setBackground(Color.white);
+				distanceLabelPanel.setBackground(Color.white);
+				maxDistancePanel.setBackground(Color.white);
+				minDistancePanel.setBackground(Color.white);
+				orbitsParametersPanel.setBackground(Color.white);
+				simulationField.setBackground(Color.white);
+				
+			}
+			if(motive==2) {
+				topPanel.setBackground(Color.black);
+				simulationActionPanel.setBackground(Color.black);
+				distanceToSunPanel.setBackground(Color.black);
+				choosePlanetPanel.setBackground(Color.black);
+				checkBoxPanel.setBackground(Color.black);
+				colorListPanel.setBackground(Color.black);
+				distanceLabelPanel.setBackground(Color.black);
+				maxDistancePanel.setBackground(Color.black);
+				minDistancePanel.setBackground(Color.black);
+				orbitsParametersPanel.setBackground(Color.black);
+				simulationField.setBackground(Color.black);
+			}
+		}
+	};
+	public static void main(String[] a) {
     	MainFrame frame = new MainFrame();
     	frame.setVisible(true);
     	frame.splitPane.setDividerLocation(0.66);
-    	
+
+    	frame.splitPane.setDividerLocation(0.66);  	
   }
-}
+} 
