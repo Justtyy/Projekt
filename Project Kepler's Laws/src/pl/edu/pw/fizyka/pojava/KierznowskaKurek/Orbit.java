@@ -35,8 +35,8 @@ public class Orbit {
 		semiminorAxisEndX = (panelW/2);
 		semiminorAxisEndY = ((panelH/2)-(intMinorAxis));
 		focusDistanceFromTheSun =(int) (Math.sqrt((intMajorAxis*intMajorAxis)-(intMinorAxis*intMinorAxis)));
-		sunPositionX = ((panelW/2)-focusDistanceFromTheSun-5);
-		sunPositionY = ((panelH/2)-5);
+		sunPositionX = ((panelW/2)-focusDistanceFromTheSun-15);
+		sunPositionY = ((panelH/2)-15);
 		
 	}
 	
@@ -52,7 +52,7 @@ public class Orbit {
 		
 		Color sunColor = new Color(255, 207, 0);
 		g.setColor(sunColor);
-		g.fillOval(sunPositionX, sunPositionY, 10, 10);
+		g.fillOval(sunPositionX, sunPositionY, 30, 30);
 		
 		g.setColor(Color.BLACK);
 		

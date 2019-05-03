@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 public class MainFrame extends JFrame {
@@ -138,6 +141,9 @@ public class MainFrame extends JFrame {
 			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
 			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
 			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+			ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
+			exec.execute(simulationField);
+			exec.shutdown();
 			
 			repaint();
 		}
@@ -228,6 +234,8 @@ public class MainFrame extends JFrame {
     	frame.setVisible(true);
     	frame.splitPane.setDividerLocation(0.66);
 
-    	frame.splitPane.setDividerLocation(0.66);  	
+    	frame.splitPane.setDividerLocation(0.66);  
+    	
+    	
   }
 } 
