@@ -131,7 +131,6 @@ public class MainFrame extends JFrame {
 		
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
 		
-		
 	    startStopButton.addActionListener(startStopButtonActionListener);
 	    startStopButton.addActionListener(distanceToSunListener);
 	} 
