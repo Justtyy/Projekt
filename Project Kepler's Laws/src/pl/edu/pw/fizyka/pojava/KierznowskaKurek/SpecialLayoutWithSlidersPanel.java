@@ -15,7 +15,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 	static double semiminorAxisValue= 0.1;
 	JSlider eccentricityValueSlider, semimajorAxisValueSlider;
 	JLabel semiminorAxisValueField,semimajorAxisValueField,eccentricityValueField;
-	
+	JLabel orbitsParametersLabel,eccentricityLabel,semimajorAxisLabel,semiminorAxisLabel;
 	public SpecialLayoutWithSlidersPanel() {
 	
 
@@ -24,7 +24,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         
         this.setLayout(layout);
 
-        JLabel orbitsParametersLabel = new JLabel("Parametry orbity:");
+        orbitsParametersLabel = new JLabel("Parametry orbity:");
         orbitsParametersLabel.setHorizontalAlignment(JLabel.CENTER);
         orbitsParametersLabel.setFont(new Font("SansSerif", Font.BOLD, 15));
     	gridBagConstraints.gridx = 0;//first column
@@ -48,7 +48,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 2;
         this.add(semiminorAxisValueField, gridBagConstraints);
        
-        JLabel eccentricityLabel = new JLabel("Wartoœæ mimoœrodu:");
+        eccentricityLabel = new JLabel("Wartoœæ mimoœrodu:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
 		gridBagConstraints.gridwidth = 1;
@@ -93,7 +93,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 			}
 		});
 
-        JLabel semimajorAxisLabel = new JLabel("D³ugoœæ wielkiej pó³osi:");
+        semimajorAxisLabel = new JLabel("D³ugoœæ wielkiej pó³osi:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
 		gridBagConstraints.gridwidth = 1;
@@ -139,7 +139,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 		});
         this.add(semimajorAxisValueSlider, gridBagConstraints);
           
-        JLabel semiminorAxisLabel = new JLabel("D³ugoœæ ma³ej pó³ósi:");
+        semiminorAxisLabel = new JLabel("D³ugoœæ ma³ej pó³ósi:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
 		gridBagConstraints.gridwidth = 1;

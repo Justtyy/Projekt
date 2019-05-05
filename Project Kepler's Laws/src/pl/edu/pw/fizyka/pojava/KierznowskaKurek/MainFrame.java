@@ -1,24 +1,24 @@
 package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-
 
 public class MainFrame extends JFrame {
 	
 	Orbit orbit;
 	int panelHeight, panelWidth;
 	int showAxisValue, showOrbitValue;
-
 	JPanel leftPanel, settingsPanel, topPanel, simulationActionPanel; //main panels
 	JPanel settingsCenterPanel;
-	JPanel choosePlanetPanel, orbitsParametersPanel, distanceToSunPanel, animationsActionsPanel, checkBoxPanel, colorListPanel;
+	SpecialLayoutWithSlidersPanel orbitsParametersPanel;
+	JPanel choosePlanetPanel, distanceToSunPanel, animationsActionsPanel, checkBoxPanel, colorListPanel;
 	JPanel distanceLabelPanel, maxDistancePanel, minDistancePanel;
 	final JSplitPane splitPane;
 	JButton savePlanet, startStopButton;
@@ -87,7 +87,6 @@ public class MainFrame extends JFrame {
 		settingsCenterPanel.setLayout(new GridLayout(2,1));
 		//SpecialLayoutWithSlidersPanel - contains orbit's parameters, like semiminor and semimajor axis and eccentricity
 		settingsCenterPanel.add(orbitsParametersPanel = new SpecialLayoutWithSlidersPanel());
-		//eccentricity = SpecialLayoutWithSlidersPanel.giveEccentricity();
 		orbitsParametersPanel.setPreferredSize(new Dimension(100, 120));
 		
 		//Settings about maximum and minimum distance from the Sun
@@ -143,6 +142,9 @@ public class MainFrame extends JFrame {
 			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
 			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
 			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+			ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
+			exec.execute(simulationField);
+			exec.shutdown();
 			
 			repaint();
 		}
@@ -208,7 +210,54 @@ public class MainFrame extends JFrame {
 				maxDistancePanel.setBackground(Color.white);
 				minDistancePanel.setBackground(Color.white);
 				orbitsParametersPanel.setBackground(Color.white);
-				simulationField.setBackground(Color.white);	
+				simulationField.setBackground(Color.white);
+
+				Color dayMotive = new Color(14,41,75);
+				savePlanet.setBackground(Color.white);
+				savePlanet.setForeground(dayMotive);
+				language.setForeground(dayMotive);
+				startStopButton.setBackground(Color.white);
+				startStopButton.setForeground(dayMotive);
+				polish.setBackground(Color.white);
+				polish.setForeground(dayMotive);
+				english.setBackground(Color.white);
+				english.setForeground(dayMotive);
+				planetList.setBackground(Color.white);
+				planetList.setForeground(dayMotive);
+				colorList.setBackground(Color.white);
+				colorList.setForeground(dayMotive);
+				okColorButton.setBackground(Color.white);
+				okColorButton.setForeground(dayMotive);
+				okPlanetButton.setBackground(Color.white);
+				okPlanetButton.setForeground(dayMotive);
+				showAxis.setBackground(Color.white);
+				showAxis.setForeground(dayMotive);
+				showOrbit.setBackground(Color.white);
+				showOrbit.setForeground(dayMotive);
+				orbitsParametersPanel.orbitsParametersLabel.setForeground(dayMotive);
+				orbitsParametersPanel.semimajorAxisValueField.setBackground(Color.white);
+				orbitsParametersPanel.semimajorAxisValueField.setForeground(dayMotive);
+				orbitsParametersPanel.semimajorAxisLabel.setForeground(dayMotive);
+				orbitsParametersPanel.semimajorAxisValueSlider.setBackground(Color.white);
+				orbitsParametersPanel.semimajorAxisValueSlider.setForeground(dayMotive);
+				orbitsParametersPanel.semiminorAxisValueField.setBackground(Color.white);
+				orbitsParametersPanel.semiminorAxisValueField.setForeground(dayMotive);
+				orbitsParametersPanel.semiminorAxisLabel.setForeground(dayMotive);
+				orbitsParametersPanel.eccentricityValueField.setBackground(Color.white);
+				orbitsParametersPanel.eccentricityValueField.setForeground(dayMotive);
+				orbitsParametersPanel.eccentricityLabel.setForeground(dayMotive);
+				orbitsParametersPanel.eccentricityValueSlider.setBackground(Color.white);
+				orbitsParametersPanel.eccentricityValueSlider.setForeground(dayMotive);
+				distanceLabel.setForeground(dayMotive);
+				maxDistanceToSun.setBackground(Color.white);
+				maxDistanceToSun.setForeground(dayMotive);
+				maxDistanceLabel.setForeground(dayMotive);
+				minDistanceToSun.setBackground(Color.white);
+				minDistanceToSun.setForeground(dayMotive);
+				minDistanceLabel.setForeground(dayMotive);
+				orbit.axisColor = dayMotive;
+				orbit.orbitColor = dayMotive;
+				simulationField.planetColor = new Color(142, 10, 70);
 				
 			}
 			if(motive==2) {
@@ -223,29 +272,129 @@ public class MainFrame extends JFrame {
 				minDistancePanel.setBackground(Color.black);
 				orbitsParametersPanel.setBackground(Color.black);
 				simulationField.setBackground(Color.black);
+				
+				savePlanet.setBackground(Color.black);
+				savePlanet.setForeground(Color.white);
+				language.setForeground(Color.white);
+				startStopButton.setBackground(Color.black);
+				startStopButton.setForeground(Color.white);
+				polish.setBackground(Color.black);
+				polish.setForeground(Color.white);
+				english.setBackground(Color.black);
+				english.setForeground(Color.white);
+				planetList.setBackground(Color.black);
+				planetList.setForeground(Color.white);
+				colorList.setBackground(Color.black);
+				colorList.setForeground(Color.white);
+				okColorButton.setBackground(Color.black);
+				okColorButton.setForeground(Color.white);
+				okPlanetButton.setBackground(Color.black);
+				okPlanetButton.setForeground(Color.white);
+				showAxis.setBackground(Color.black);
+				showAxis.setForeground(Color.white);
+				showOrbit.setBackground(Color.black);
+				showOrbit.setForeground(Color.white);
+				orbitsParametersPanel.orbitsParametersLabel.setForeground(Color.white);
+				orbitsParametersPanel.semimajorAxisValueField.setBackground(Color.black);
+				orbitsParametersPanel.semimajorAxisValueField.setForeground(Color.white);
+				orbitsParametersPanel.semimajorAxisLabel.setForeground(Color.white);
+				orbitsParametersPanel.semimajorAxisValueSlider.setBackground(Color.black);
+				orbitsParametersPanel.semimajorAxisValueSlider.setForeground(Color.white);
+				orbitsParametersPanel.semiminorAxisValueField.setBackground(Color.black);
+				orbitsParametersPanel.semiminorAxisValueField.setForeground(Color.white);
+				orbitsParametersPanel.semiminorAxisLabel.setForeground(Color.white);
+				orbitsParametersPanel.eccentricityValueField.setBackground(Color.black);
+				orbitsParametersPanel.eccentricityValueField.setForeground(Color.white);
+				orbitsParametersPanel.eccentricityLabel.setForeground(Color.white);
+				orbitsParametersPanel.eccentricityValueSlider.setBackground(Color.black);
+				orbitsParametersPanel.eccentricityValueSlider.setForeground(Color.white);
+				distanceLabel.setForeground(Color.white);
+				maxDistanceToSun.setBackground(Color.black);
+				maxDistanceToSun.setForeground(Color.white);
+				maxDistanceLabel.setForeground(Color.white);
+				minDistanceToSun.setBackground(Color.black);
+				minDistanceToSun.setForeground(Color.white);
+				minDistanceLabel.setForeground(Color.white);
+				orbit.axisColor = Color.white;
+				orbit.orbitColor = Color.white;
+				simulationField.planetColor = new Color(132,195,190);
 			}
-			if(motive==0) {
-				topPanel.setBackground(new Color(215,215,215));
-				simulationActionPanel.setBackground(new Color(215,215,215));
-				distanceToSunPanel.setBackground(new Color(215,215,215));
-				choosePlanetPanel.setBackground(new Color(215,215,215));
-				checkBoxPanel.setBackground(new Color(215,215,215));
-				colorListPanel.setBackground(new Color(215,215,215));
-				distanceLabelPanel.setBackground(new Color(215,215,215));
-				maxDistancePanel.setBackground(new Color(215,215,215));
-				minDistancePanel.setBackground(new Color(215,215,215));
-				orbitsParametersPanel.setBackground(new Color(215,215,215));
-				simulationField.setBackground(new Color(215,215,215));
-			}
-			
+		
+			else {
+				Color defaultMotive = new Color(255,253,253);
+				topPanel.setBackground(defaultMotive);
+				simulationActionPanel.setBackground(defaultMotive);
+				distanceToSunPanel.setBackground(defaultMotive);
+				choosePlanetPanel.setBackground(defaultMotive);
+				checkBoxPanel.setBackground(defaultMotive);
+				colorListPanel.setBackground(defaultMotive);
+				distanceLabelPanel.setBackground(defaultMotive);
+				maxDistancePanel.setBackground(defaultMotive);
+				minDistancePanel.setBackground(defaultMotive);
+				orbitsParametersPanel.setBackground(defaultMotive);
+				simulationField.setBackground(defaultMotive);
+
+				
+				savePlanet.setBackground(defaultMotive);
+				savePlanet.setForeground(Color.black);
+				language.setForeground(Color.black);
+				startStopButton.setBackground(defaultMotive);
+				startStopButton.setForeground(Color.black);
+				polish.setBackground(defaultMotive);
+				polish.setForeground(Color.black);
+				english.setBackground(defaultMotive);
+				english.setForeground(Color.black);
+				planetList.setBackground(defaultMotive);
+				planetList.setForeground(Color.black);
+				colorList.setBackground(defaultMotive);
+				colorList.setForeground(Color.black);
+				okColorButton.setBackground(defaultMotive);
+				okColorButton.setForeground(Color.black);
+				okPlanetButton.setBackground(defaultMotive);
+				okPlanetButton.setForeground(Color.black);
+				showAxis.setBackground(defaultMotive);
+				showAxis.setForeground(Color.black);
+				showOrbit.setBackground(defaultMotive);
+				showOrbit.setForeground(Color.black);
+				orbitsParametersPanel.orbitsParametersLabel.setForeground(Color.black);
+				orbitsParametersPanel.semimajorAxisValueField.setBackground(defaultMotive);
+				orbitsParametersPanel.semimajorAxisValueField.setForeground(Color.black);
+				orbitsParametersPanel.semimajorAxisLabel.setForeground(Color.black);
+				orbitsParametersPanel.semimajorAxisValueSlider.setBackground(defaultMotive);
+				orbitsParametersPanel.semimajorAxisValueSlider.setForeground(Color.black);
+				orbitsParametersPanel.semiminorAxisValueField.setBackground(defaultMotive);
+				orbitsParametersPanel.semiminorAxisValueField.setForeground(Color.black);
+				orbitsParametersPanel.semiminorAxisLabel.setForeground(Color.black);
+				orbitsParametersPanel.eccentricityValueField.setBackground(defaultMotive);
+				orbitsParametersPanel.eccentricityValueField.setForeground(Color.black);
+				orbitsParametersPanel.eccentricityLabel.setForeground(Color.black);
+				orbitsParametersPanel.eccentricityValueSlider.setBackground(defaultMotive);
+				orbitsParametersPanel.eccentricityValueSlider.setForeground(Color.black);
+				distanceLabel.setForeground(Color.black);
+				maxDistanceToSun.setBackground(defaultMotive);
+				maxDistanceToSun.setForeground(Color.black);
+				maxDistanceLabel.setForeground(Color.black);
+				minDistanceToSun.setBackground(defaultMotive);
+				minDistanceToSun.setForeground(Color.black);
+				minDistanceLabel.setForeground(Color.black);
+				orbit.axisColor = Color.black;
+				orbit.orbitColor = Color.black;
+				simulationField.planetColor = new Color(142, 10, 70);
+				
+			}	
 		}
 	};
 	
-
 	
     public static void main(String[] a) {
-    	MainFrame frame = new MainFrame();
-    	frame.setVisible(true);
-    	frame.splitPane.setDividerLocation(0.66);  	
+   
+    	SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				MainFrame frame = new MainFrame();
+		    	frame.setVisible(true);
+		    	frame.splitPane.setDividerLocation(0.66);  
+			}
+		});
+    	
   }
-}
+} 

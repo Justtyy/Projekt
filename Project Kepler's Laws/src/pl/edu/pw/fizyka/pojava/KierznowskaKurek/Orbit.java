@@ -16,6 +16,7 @@ public class Orbit {
 	int semimajorAxisStartX, semimajorAxisStartY, semimajorAxisEndX, semimajorAxisEndY;
 	int sunPositionX, sunPositionY;
 	int focusDistanceFromTheSun;
+	Color axisColor, orbitColor;
 	
 	public Orbit(double majorAxis,double minorAxis, double ecc, int panelH, int panelW) {
 		semimajorAxis = majorAxis;
@@ -35,8 +36,8 @@ public class Orbit {
 		semiminorAxisEndX = (panelW/2);
 		semiminorAxisEndY = ((panelH/2)-(intMinorAxis));
 		focusDistanceFromTheSun =(int) (Math.sqrt((intMajorAxis*intMajorAxis)-(intMinorAxis*intMinorAxis)));
-		sunPositionX = ((panelW/2)-focusDistanceFromTheSun-5);
-		sunPositionY = ((panelH/2)-5);
+		sunPositionX = ((panelW/2)-focusDistanceFromTheSun-15);
+		sunPositionY = ((panelH/2)-15);
 		
 	}
 	
@@ -52,17 +53,19 @@ public class Orbit {
 		
 		Color sunColor = new Color(255, 207, 0);
 		g.setColor(sunColor);
-		g.fillOval(sunPositionX, sunPositionY, 10, 10);
-		g.setColor(Color.BLACK);
+		g.fillOval(sunPositionX, sunPositionY, 30, 30);
+		
+		g.setColor(Color.gray);
 		
 		if (showOrbit == 1) {
 		g.drawOval(panelWidth, panelHeight,(int)(2*semimajorAxis), (int)(2*semiminorAxis));
+		g.setColor(orbitColor);
 		}
 		if (showAxis == 1) {
 			g.drawLine(semimajorAxisStartX, semimajorAxisStartY, semimajorAxisEndX, semimajorAxisEndY);
 			g.drawLine(semiminorAxisStartX, semiminorAxisStartY, semiminorAxisEndX, semiminorAxisEndY);
+			g.setColor(axisColor);
 		}
 			
 	}
 }
-
