@@ -1,30 +1,26 @@
 package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
-
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+//Justyna Kurek
 public class SpecialLayoutWithSlidersPanel extends JPanel{
 	static double eccentricityValue = 0;
 	static double semimajorAxisValue = 0.1;
 	static double semiminorAxisValue= 0.1;
 	JSlider eccentricityValueSlider, semimajorAxisValueSlider;
 	JLabel semiminorAxisValueField,semimajorAxisValueField,eccentricityValueField;
-	
+	JLabel orbitsParametersLabel,eccentricityLabel,semimajorAxisLabel,semiminorAxisLabel;
 	public SpecialLayoutWithSlidersPanel() {
 	
-
 		GridBagLayout layout = new GridBagLayout();
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
         
         this.setLayout(layout);
-
-        JLabel orbitsParametersLabel = new JLabel("Parametry orbity:");
+        orbitsParametersLabel = new JLabel("Parametry orbity:");
         orbitsParametersLabel.setHorizontalAlignment(JLabel.CENTER);
         orbitsParametersLabel.setFont(new Font("SansSerif", Font.BOLD, 15));
     	gridBagConstraints.gridx = 0;//first column
@@ -34,7 +30,6 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weightx = 1.0;//request any extra vertical space
         gridBagConstraints.weighty = 1;//request any extra horizontal space
         this.add(orbitsParametersLabel, gridBagConstraints);   
-        
         
         semiminorAxisValueField = new JLabel("0.1AU");//etykieta z wartoscia malej polosi, uzupelniona pozniej(w sliderach na biezaco)
         semiminorAxisValueField.setPreferredSize(new Dimension(100, 20));
@@ -47,8 +42,8 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weightx = 1;
         gridBagConstraints.weighty = 2;
         this.add(semiminorAxisValueField, gridBagConstraints);
-       
-        JLabel eccentricityLabel = new JLabel("Wartoœæ mimoœrodu:");
+        
+        eccentricityLabel = new JLabel("Wartoœæ mimoœrodu:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
 		gridBagConstraints.gridwidth = 1;
@@ -92,8 +87,8 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 				repaint();
 			}
 		});
-
-        JLabel semimajorAxisLabel = new JLabel("D³ugoœæ wielkiej pó³osi:");
+        
+        semimajorAxisLabel = new JLabel("D³ugoœæ wielkiej pó³osi:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
 		gridBagConstraints.gridwidth = 1;
@@ -113,16 +108,17 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weightx = 1;
         gridBagConstraints.weighty = 1;
         this.add(semimajorAxisValueField, gridBagConstraints);
-   	
+
        semimajorAxisValueSlider = new JSlider(JSlider.HORIZONTAL, 100, 100000, 100);
-        //1 AU = 1,495978707×10^11 m
+       
+       //1 AU = 1,495978707×10^11 m
 		gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+       gridBagConstraints.gridy = 6;
 		gridBagConstraints.gridwidth = 2;
 		gridBagConstraints.gridheight = 1;
-        gridBagConstraints.weighty = 0.1;
-        //Akcja dla slidera dla wielkiej polosi (powinno byc od 0,1 do 100AU)
-        semimajorAxisValueSlider.addChangeListener(new ChangeListener() {
+       gridBagConstraints.weighty = 0.1;
+       //Akcja dla slidera dla wielkiej polosi (powinno byc od 0,1 do 100AU)
+       semimajorAxisValueSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				eccentricityValue = eccentricityValueSlider.getValue();
 				semimajorAxisValue =semimajorAxisValueSlider.getValue();
@@ -133,30 +129,25 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 				String stringSemiminorAxisValue = formatter.format(semiminorAxisValue);
 				semiminorAxisValueField.setText(stringSemiminorAxisValue+"AU");
 				repaint();
-				
-				
 			}
 		});
         this.add(semimajorAxisValueSlider, gridBagConstraints);
-          
-        JLabel semiminorAxisLabel = new JLabel("D³ugoœæ ma³ej pó³ósi:");
-		gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
-		gridBagConstraints.gridwidth = 1;
-		gridBagConstraints.gridheight = 1;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 2;
-        this.add(semiminorAxisLabel, gridBagConstraints);
-
-	}
-	public static double giveEccentricity() {
-		return eccentricityValue/1000;
-	}
-	public static double giveSemimajorAxis() {
-		return semimajorAxisValue/1000;
-	}
-	public static double giveSemiminorAxis() {
-		return semiminorAxisValue;
-	}
-	
-} 
+        semiminorAxisLabel = new JLabel("D³ugoœæ ma³ej pó³osi:");
+  		gridBagConstraints.gridx = 0;
+          gridBagConstraints.gridy = 7;
+  		gridBagConstraints.gridwidth = 1;
+  		gridBagConstraints.gridheight = 1;
+          gridBagConstraints.weightx = 1.0;
+          gridBagConstraints.weighty = 2;
+          this.add(semiminorAxisLabel, gridBagConstraints);
+  	}
+  	public static double giveEccentricity() {
+  		return eccentricityValue/1000;
+  	}
+  	public static double giveSemimajorAxis() {
+  		return semimajorAxisValue/1000;
+  	}
+  	public static double giveSemiminorAxis() {
+  		return semiminorAxisValue;
+  	}
+  }  
