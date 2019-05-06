@@ -11,23 +11,22 @@ import java.util.concurrent.Executors;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-
 public class MainFrame extends JFrame {
-
+	
 	Orbit orbit;
 	int panelHeight, panelWidth;
 	int showAxisValue, showOrbitValue;
 	JPanel leftPanel, settingsPanel, topPanel, simulationActionPanel; //main panels
 	JPanel settingsCenterPanel;
-	SpecialLayoutWithSlidersPanel orbitsParametersPanel;
 	JPanel choosePlanetPanel, distanceToSunPanel, animationsActionsPanel, checkBoxPanel, colorListPanel;
+	SpecialLayoutWithSlidersPanel orbitsParametersPanel;
 	JPanel distanceLabelPanel, maxDistancePanel, minDistancePanel;
 	final JSplitPane splitPane;
 	JButton savePlanet, startStopButton;
 	JLabel language, distanceLabel, minDistanceLabel, maxDistanceLabel;//labels
 	JRadioButton polish, english;
 	String[] planetStrings = {"Wybierz planetę", "Merkury","Wenus", "Ziemia", "Mars", "Jowisz", "Saturn", "Uran", "Neptun"};
-	String[] colorStrings = {"Wybierz motyw symulacji", "Dzieñ", "Noc"};
+	String[] colorStrings = {"Wybierz motyw symulacji", "Dzień", "Noc"};
 	JComboBox planetList, colorList;
 	JButton okPlanetButton, okColorButton;
 	JCheckBox showOrbit, showAxis;
@@ -36,6 +35,7 @@ public class MainFrame extends JFrame {
 	SimulationField simulationField;
 	int counter=0;
 	boolean click;
+	
 	public MainFrame() throws HeadlessException {
 		
 		//main frame settings
@@ -73,6 +73,8 @@ public class MainFrame extends JFrame {
 		simulationActionPanel.setBorder(grayLine);
 		simulationActionPanel.setLayout(new BorderLayout());
 		
+		
+		
 		settingsPanel.setLayout(new BorderLayout());
 		settingsPanel.add(choosePlanetPanel = new JPanel(), BorderLayout.PAGE_START);
 		settingsPanel.add(settingsCenterPanel = new JPanel(), BorderLayout.CENTER);
@@ -89,6 +91,7 @@ public class MainFrame extends JFrame {
 		settingsCenterPanel.setLayout(new GridLayout(2,1));
 		//SpecialLayoutWithSlidersPanel - contains orbit's parameters, like semiminor and semimajor axis and eccentricity
 		settingsCenterPanel.add(orbitsParametersPanel = new SpecialLayoutWithSlidersPanel());
+		//eccentricity = SpecialLayoutWithSlidersPanel.giveEccentricity();
 		orbitsParametersPanel.setPreferredSize(new Dimension(100, 120));
 		
 		//Settings about maximum and minimum distance from the Sun
@@ -120,6 +123,7 @@ public class MainFrame extends JFrame {
 		showAxis.addActionListener(showAxisListener);
 		showOrbit.addActionListener(showOrbitListener);
 		
+		
 		//List with colors and motives 
 		colorList = new JComboBox(colorStrings);
 		colorList.setSelectedIndex(0);
@@ -130,13 +134,13 @@ public class MainFrame extends JFrame {
 		okColorButton.addActionListener(chooseMotive);
 		
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
+		
+		
+	   
 	    startStopButton.addActionListener(distanceToSunListener);
 	    startStopButton.addMouseListener(mouseClickCounterListener);
-	   
 	} 
-
 	MouseListener mouseClickCounterListener = new MouseListener() {
-		
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			// TODO Auto-generated method stub
@@ -174,6 +178,7 @@ public class MainFrame extends JFrame {
 			}
 		}
 	};
+	
 	class SimulationtThread extends Thread{
 		public void run() {
 			if(click==true) {
@@ -190,8 +195,6 @@ public class MainFrame extends JFrame {
 				}			
 			}
 		}
-	
-	
 	//actionlistener ustawiajacy odleglosci planety od Słońca, dodany do startStopButton
 	ActionListener distanceToSunListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -220,7 +223,8 @@ public class MainFrame extends JFrame {
 			}
 			orbit.ifShowAxis(showAxisValue);
 			repaint();
-		
+			
+			
 		}
 	};
 	
@@ -425,17 +429,15 @@ public class MainFrame extends JFrame {
 			}	
 		}
 	};
-	
+
 	
     public static void main(String[] a) {
-   
-    	SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				MainFrame frame = new MainFrame();
-		    	frame.setVisible(true);
-		    	frame.splitPane.setDividerLocation(0.66);  
-			}
-		});
+    	MainFrame frame = new MainFrame();
+    	frame.setVisible(true);
+    	frame.splitPane.setDividerLocation(0.66);
+
+    	frame.splitPane.setDividerLocation(0.66);  
+    	
     	
   }
 } 

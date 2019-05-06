@@ -48,7 +48,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 2;
         this.add(semiminorAxisValueField, gridBagConstraints);
        
-        eccentricityLabel = new JLabel("Wartoœæ mimoœrodu:");
+        eccentricityLabel = new JLabel("WartoÅ›Ä‡ mimoÅ›rodu:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
 		gridBagConstraints.gridwidth = 1;
@@ -86,14 +86,14 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 				NumberFormat formatter = new DecimalFormat("#0.000");//format dla double do trzech miejsc po przecinku
 				String stringEccentricityValue = formatter.format(eccentricityValue/1000);
 				eccentricityValueField.setText(stringEccentricityValue);
-				semiminorAxisValue = Math.sqrt(1-((eccentricityValue/1000)*(eccentricityValue/1000)))*(semimajorAxisValue/1000); //obliczanie malej pólosi
+				semiminorAxisValue = Math.sqrt(1-((eccentricityValue/1000)*(eccentricityValue/1000)))*(semimajorAxisValue/1000); //obliczanie malej pÃ³losi
 				String stringSemiminorAxisValue = formatter.format(semiminorAxisValue);
 				semiminorAxisValueField.setText(stringSemiminorAxisValue+"AU");
 				repaint();
 			}
 		});
 
-        semimajorAxisLabel = new JLabel("D³ugoœæ wielkiej pó³osi:");
+        semimajorAxisLabel = new JLabel("DÅ‚ugoÅ›Ä‡ wielkiej pÃ³Å‚osi:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
 		gridBagConstraints.gridwidth = 1;
@@ -115,7 +115,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         this.add(semimajorAxisValueField, gridBagConstraints);
    	
        semimajorAxisValueSlider = new JSlider(JSlider.HORIZONTAL, 100, 100000, 100);
-        //1 AU = 1,495978707×10^11 m
+        //1 AU = 1,495978707Ã—10^11 m
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
 		gridBagConstraints.gridwidth = 2;
@@ -129,7 +129,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 				NumberFormat formatter = new DecimalFormat("#0.000");//format dla double do trzech miejsc po przecinku
 				String stringSemimajorValue = formatter.format(semimajorAxisValue/1000);
 				semimajorAxisValueField.setText(stringSemimajorValue+"AU");
-				semiminorAxisValue = Math.sqrt(1-((eccentricityValue/1000)*(eccentricityValue/1000)))*(semimajorAxisValue/1000); //obliczanie malej pólosi
+				semiminorAxisValue = Math.sqrt(1-((eccentricityValue/1000)*(eccentricityValue/1000)))*(semimajorAxisValue/1000); //obliczanie malej pÃ³losi
 				String stringSemiminorAxisValue = formatter.format(semiminorAxisValue);
 				semiminorAxisValueField.setText(stringSemiminorAxisValue+"AU");
 				repaint();
@@ -139,7 +139,7 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 		});
         this.add(semimajorAxisValueSlider, gridBagConstraints);
           
-        semiminorAxisLabel = new JLabel("D³ugoœæ ma³ej pó³ósi:");
+        semiminorAxisLabel = new JLabel("DÅ‚ugoÅ›Ä‡ maÅ‚ej pÃ³Å‚osi:");
 		gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
 		gridBagConstraints.gridwidth = 1;
@@ -159,4 +159,4 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 		return semiminorAxisValue;
 	}
 	
-} 
+}  

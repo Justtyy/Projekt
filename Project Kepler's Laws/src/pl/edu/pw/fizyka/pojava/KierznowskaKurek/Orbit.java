@@ -37,8 +37,7 @@ public class Orbit {
 		semiminorAxisEndY = ((panelH/2)-(intMinorAxis));
 		focusDistanceFromTheSun =(int) (Math.sqrt((intMajorAxis*intMajorAxis)-(intMinorAxis*intMinorAxis)));
 		sunPositionX = ((panelW/2)-focusDistanceFromTheSun-15);
-		sunPositionY = ((panelH/2)-15);
-		
+		sunPositionY = ((panelH/2)-15);	
 	}
 	
 	public void ifShowAxis(int i) {
