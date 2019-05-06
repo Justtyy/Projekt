@@ -2,6 +2,8 @@ package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.concurrent.ExecutorService;
@@ -11,7 +13,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 public class MainFrame extends JFrame {
-	
+
 	Orbit orbit;
 	int panelHeight, panelWidth;
 	int showAxisValue, showOrbitValue;
@@ -32,6 +34,8 @@ public class MainFrame extends JFrame {
 	JLabel minDistanceToSun, maxDistanceToSun;//values
 	Border blackLine, grayLine;
 	SimulationField simulationField;
+	int counter=0;
+	boolean click;
 	public MainFrame() throws HeadlessException {
 		
 		//main frame settings
@@ -68,8 +72,6 @@ public class MainFrame extends JFrame {
 		leftPanel.add(simulationActionPanel = new JPanel());
 		simulationActionPanel.setBorder(grayLine);
 		simulationActionPanel.setLayout(new BorderLayout());
-		
-		
 		
 		settingsPanel.setLayout(new BorderLayout());
 		settingsPanel.add(choosePlanetPanel = new JPanel(), BorderLayout.PAGE_START);
@@ -118,7 +120,6 @@ public class MainFrame extends JFrame {
 		showAxis.addActionListener(showAxisListener);
 		showOrbit.addActionListener(showOrbitListener);
 		
-		
 		//List with colors and motives 
 		colorList = new JComboBox(colorStrings);
 		colorList.setSelectedIndex(0);
@@ -129,26 +130,68 @@ public class MainFrame extends JFrame {
 		okColorButton.addActionListener(chooseMotive);
 		
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
-		
-		
-	    startStopButton.addActionListener(startStopButtonActionListener);
 	    startStopButton.addActionListener(distanceToSunListener);
+	    startStopButton.addMouseListener(mouseClickCounterListener);
+	   
 	} 
-	ActionListener startStopButtonActionListener = new ActionListener() {
+
+	MouseListener mouseClickCounterListener = new MouseListener() {
+		
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
-			panelWidth = simulationActionPanel.getWidth();//to też
-			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
-			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
-			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
-			ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
-			exec.execute(simulationField);
-			exec.shutdown();
-			
-			repaint();
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub	
+		}
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub	
+		}
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub	
+		}
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			counter++;
+			SimulationtThread simulationThread = new SimulationtThread(); 
+			if(counter==1) {
+				click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
+				simulationThread.start();
+			}
+			else if(counter>1 && counter%2==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
+				click=false;
+				try {
+					simulationThread.join();
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				startStopButton.setText("Start");
+				repaint();
+			}
 		}
 	};
+	class SimulationtThread extends Thread{
+		public void run() {
+			if(click==true) {
+				panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
+				panelWidth = simulationActionPanel.getWidth();//to też
+				orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
+				simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
+				simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+				ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
+				exec.execute(simulationField);
+				exec.shutdown();
+				startStopButton.setText("Stop");
+				repaint();
+				}			
+			}
+		}
+	
+	
 	//actionlistener ustawiajacy odleglosci planety od Słońca, dodany do startStopButton
 	ActionListener distanceToSunListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -177,8 +220,7 @@ public class MainFrame extends JFrame {
 			}
 			orbit.ifShowAxis(showAxisValue);
 			repaint();
-			
-			
+		
 		}
 	};
 	
@@ -334,7 +376,6 @@ public class MainFrame extends JFrame {
 				orbitsParametersPanel.setBackground(defaultMotive);
 				simulationField.setBackground(defaultMotive);
 
-				
 				savePlanet.setBackground(defaultMotive);
 				savePlanet.setForeground(Color.black);
 				language.setForeground(Color.black);
