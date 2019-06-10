@@ -115,6 +115,18 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 1;
         this.add(semimajorAxisValueField, gridBagConstraints);
 
+        semimajorAxisValueField = new JLabel("0.1AU");//wartosc wielkiej polosi pobierana na biezaco ze slidera
+        semimajorAxisValueField.setPreferredSize(new Dimension(100, 20));
+        semimajorAxisValueField.setBackground(Color.white);
+        semimajorAxisValueField.setOpaque(true);
+		gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+		gridBagConstraints.gridwidth = 1;
+		gridBagConstraints.gridheight = 1;
+        gridBagConstraints.weightx = 1;
+        gridBagConstraints.weighty = 1;
+        this.add(semimajorAxisValueField, gridBagConstraints);
+        
        semimajorAxisValueSlider = new JSlider(JSlider.HORIZONTAL, 100, 100000, 100);
        
        //1 AU = 1,495978707�10^11 m

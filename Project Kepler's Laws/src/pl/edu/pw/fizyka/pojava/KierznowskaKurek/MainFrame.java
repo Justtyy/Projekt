@@ -12,6 +12,24 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StreamTokenizer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Scanner;
+import java.util.StringTokenizer;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -28,7 +46,7 @@ public class MainFrame extends JFrame {
 	SpecialLayoutWithSlidersPanel orbitsParametersPanel;
 	JPanel distanceLabelPanel, maxDistancePanel, minDistancePanel;
 	final JSplitPane splitPane;
-	JButton savePlanet, startStopButton;
+	JButton openFile, savePlanet, startStopButton;
 	JLabel languageLabel, distanceLabel, minDistanceLabel, maxDistanceLabel;//labels
 	JRadioButton polish, english;
 	JComboBox planetList, colorList;
@@ -41,6 +59,10 @@ public class MainFrame extends JFrame {
 	int counter=0;
 	boolean click;
 	boolean restart;
+	
+	 long time_start, time_stop;
+		
+		Connection conn = null;
 
 
 	public MainFrame() throws HeadlessException {
@@ -75,7 +97,10 @@ public class MainFrame extends JFrame {
 		leftPanel.add(topPanel, BorderLayout.PAGE_START);
 		topPanel.setBorder(blackLine);
 		topPanel.setLayout(new FlowLayout());
+		topPanel.add(openFile = new JButton(language.text.getString("open")));
+		openFile.addActionListener(ReadFileListener);
 		topPanel.add(savePlanet = new JButton(language.text.getString("save")));
+		savePlanet.addActionListener(SaveFileListener);
 		topPanel.add(languageLabel = new JLabel(language.text.getString("language")));
 		topPanel.add(polish = new JRadioButton(language.text.getString("pl")));
 		topPanel.add(english = new JRadioButton(language.text.getString("en")));
@@ -147,6 +172,7 @@ public class MainFrame extends JFrame {
 		colorListPanel.add(okColorButton = new JButton("OK"));
 		okColorButton.setToolTipText(language.text.getString("confirmTheme"));
 		okColorButton.addActionListener(chooseMotive);
+		okPlanetButton.addActionListener(OpenPlanetBase);
 
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
 
@@ -178,22 +204,33 @@ public class MainFrame extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			counter++;
-			SimulationtThread simulationThread = new SimulationtThread(); 
-			if(counter==1) {
-				click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
-				simulationThread.start();
+			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
+			panelWidth = simulationActionPanel.getWidth();//to też
+			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
+			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
+			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+			//ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
+			Thread thread = new Thread(simulationField);
+			
+			if(counter ==1) {
+			
+				startStopButton.setText("Stop");
+				thread.start();
 			}
-			else if(counter>1 && counter%2==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
-				click=false;
+			else if(counter>1 && (counter%2)==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
+			
+				
+				startStopButton.setText("Start");
+				//int time = (int) ((time_stop - time_start));
 				try {
-					simulationThread.join();
+					thread.sleep(1000);
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				startStopButton.setText("Start");
-				repaint();
+				
 			}
+				
 		}
 	};
 	
@@ -449,6 +486,147 @@ public class MainFrame extends JFrame {
 				simulationField.planetColor = new Color(142, 10, 70);
 				
 			}	
+		}
+	};
+	
+	ActionListener OpenPlanetBase = new ActionListener() {
+		public void actionPerformed(ActionEvent g) {
+		String chosenPlanet = (String) planetList.getSelectedItem();
+				try {
+					int planet = planetList.getSelectedIndex();
+					//System.out.println(""+planet);
+					if(planet==0) {
+						System.out.println("Nie wybrano planety");
+					}
+					else {
+						Class.forName("com.mysql.jdbc.Driver");
+						conn = DriverManager.getConnection("jdbc:mysql://db4free.net/planetbase", "projectuser", "objectprogramming");
+
+						PreparedStatement statement = (PreparedStatement) conn.prepareStatement("SELECT * FROM planetlist WHERE Id="+planet);
+						
+						statement.execute();
+						ResultSet rs = statement.getResultSet();
+				
+						
+						ResultSetMetaData md  = rs.getMetaData();
+					
+						
+						while (rs.next()) {
+								
+							orbitsParametersPanel.eccentricityValue = (double) rs.getObject(3);
+							
+							orbitsParametersPanel.eccentricityValueSlider.setValue((int) (orbitsParametersPanel.eccentricityValue*1000));
+							
+							orbitsParametersPanel.semimajorAxisValue = (double) rs.getObject(4);
+							
+							orbitsParametersPanel.semimajorAxisValueSlider.setValue( (int)(orbitsParametersPanel.semimajorAxisValue*1000));
+						}
+						
+					}	
+						
+				} catch (SQLException | ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+				finally {
+					if (conn!= null){
+						try {
+							conn.close();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+		}
+		
+	};
+	
+	KeyListener Escape = new KeyListener() {
+		
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void keyPressed(KeyEvent e) {
+			
+		    int key = e.getKeyCode();
+		
+		    if(key == KeyEvent.VK_ESCAPE);
+		    {
+		    	System.out.println("escape");
+		    	System.exit(0);
+		    }
+		}
+	};
+	
+	ActionListener ReadFileListener = new ActionListener() {
+		public void actionPerformed(ActionEvent g) {
+			try {
+				JFileChooser chooser = new JFileChooser();
+				chooser.showDialog(null, "Wybierz");
+				FileReader in = new FileReader(chooser.getSelectedFile());
+				int c;
+				 while ((c = in.read()) != -1) { // jeżeli c = -1 to koniec pliku
+		                System.out.print((char)c);
+		            }
+//				BufferedReader buffIn = new BufferedReader(in);
+//				String line;
+//				char[] litery = null;
+//				while ((line = buffIn.readLine()) != null) {
+//						litery = line.toCharArray();
+//						
+//					}
+//					
+//					String nowyText = new String (litery);
+//				while(nowyText == "/t") {
+//					System.out.println(nowyText);
+//				}
+//				
+				in.close();
+				}catch(IOException exc) {
+				exc.printStackTrace();
+			}
+			
+		}
+	};
+	
+	ActionListener SaveFileListener = new ActionListener() {
+		public void actionPerformed(ActionEvent g) {
+			JFileChooser chooser = new JFileChooser("Wybierz plik");
+			int result = chooser.showDialog(null, "Wybierz");
+			File fileToSave;
+			//modifiedText = "";
+			if(JFileChooser.APPROVE_OPTION==result) {
+				System.out.println("Wybrano plik: "+ chooser.getSelectedFile().toPath());
+				fileToSave = chooser.getSelectedFile();
+				try {
+					OutputStreamWriter osr = new OutputStreamWriter(
+						new FileOutputStream(fileToSave));					
+						BufferedWriter bfr = new BufferedWriter(osr);
+						bfr.write("Eccentricity: "+(orbitsParametersPanel.eccentricityValue/1000)+"AU, semimajor axis: "+(orbitsParametersPanel.semimajorAxisValue/1000)
+								+"AU, semiminor axis: "+orbitsParametersPanel.semiminorAxisValue);
+						
+						bfr.close();
+	}
+				 catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	}
+			else {
+				System.out.println("Nie wybrano pliku");
+			}
 		}
 	};
 	
