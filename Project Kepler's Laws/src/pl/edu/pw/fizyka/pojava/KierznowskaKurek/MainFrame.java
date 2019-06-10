@@ -2,8 +2,18 @@ package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Properties;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.concurrent.ExecutorService;
@@ -11,6 +21,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+
 public class MainFrame extends JFrame {
 	
 	Orbit orbit;
@@ -35,6 +46,8 @@ public class MainFrame extends JFrame {
 	SimulationField simulationField;
 	int counter=0;
 	boolean click;
+	
+	Connection conn = null;
 	
 	public MainFrame() throws HeadlessException {
 		
@@ -132,13 +145,13 @@ public class MainFrame extends JFrame {
 		colorListPanel.add(okColorButton = new JButton("OK"));
 		okColorButton.setToolTipText("Potwierdz wybór motywu animacji");
 		okColorButton.addActionListener(chooseMotive);
+		okPlanetButton.addActionListener(OpenPlanetBase);
 		
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
 		
-		
-	   
 	    startStopButton.addActionListener(distanceToSunListener);
 	    startStopButton.addMouseListener(mouseClickCounterListener);
+	    this.addKeyListener(escape);
 	} 
 	MouseListener mouseClickCounterListener = new MouseListener() {
 		@Override
@@ -160,41 +173,35 @@ public class MainFrame extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			counter++;
-			SimulationtThread simulationThread = new SimulationtThread(); 
-			if(counter==1) {
-				click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
-				simulationThread.start();
+
+			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
+			panelWidth = simulationActionPanel.getWidth();//to też
+			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
+			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
+			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+			//ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
+			Thread thread = new Thread(simulationField);
+			
+			if(counter ==1) {
+				
+				startStopButton.setText("Stop");
+				thread.start();
 			}
-			else if(counter>1 && counter%2==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
-				click=false;
-				try {
-					simulationThread.join();
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			else if(counter>1 && (counter%2)==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
+			
 				startStopButton.setText("Start");
-				repaint();
+				thread.suspend();	
 			}
+			else if(counter>1 && counter%2!=0) {//jesli nieparzysta to na przycisku musi byc "stop" i symulacja jest uruchomiona
+				
+				startStopButton.setText("Stop");
+				thread.resume();
+			}
+				
 		}
 	};
 	
-	class SimulationtThread extends Thread{
-		public void run() {
-			if(click==true) {
-				panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
-				panelWidth = simulationActionPanel.getWidth();//to też
-				orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
-				simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
-				simulationActionPanel.add(simulationField, BorderLayout.CENTER);
-				ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
-				exec.execute(simulationField);
-				exec.shutdown();
-				startStopButton.setText("Stop");
-				repaint();
-				}			
-			}
-		}
+
 	//actionlistener ustawiajacy odleglosci planety od Słońca, dodany do startStopButton
 	ActionListener distanceToSunListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -242,6 +249,7 @@ public class MainFrame extends JFrame {
 			repaint();
 		}
 	};
+
 	ActionListener chooseMotive = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			int motive = colorList.getSelectedIndex();
@@ -428,16 +436,98 @@ public class MainFrame extends JFrame {
 				
 			}	
 		}
-	};
+};
+ActionListener OpenPlanetBase = new ActionListener() {
+	public void actionPerformed(ActionEvent g) {
+	String chosenPlanet = (String) planetList.getSelectedItem();
+			try {
+				int planet = planetList.getSelectedIndex();
+				//System.out.println(""+planet);
+				if(planet==0) {
+					System.out.println("Nie wybrano planety");
+				}
+				else {
+					Class.forName("com.mysql.jdbc.Driver");
+					conn = DriverManager.getConnection("jdbc:mysql://db4free.net/planetbase", "projectuser", "objectprogramming");
 
+					PreparedStatement statement = (PreparedStatement) conn.prepareStatement("SELECT * FROM planetlist WHERE Id="+planet);
+					
+					statement.execute();
+					ResultSet rs = statement.getResultSet();
+			
+					
+					ResultSetMetaData md  = rs.getMetaData();
+				
+					
+					while (rs.next()) {
+							
+						orbitsParametersPanel.eccentricityValue = (double) rs.getObject(3);
+						
+						orbitsParametersPanel.eccentricityValueSlider.setValue((int) (orbitsParametersPanel.eccentricityValue*1000));
+						
+						orbitsParametersPanel.semimajorAxisValue = (double) rs.getObject(4);
+						
+						orbitsParametersPanel.semimajorAxisValueSlider.setValue( (int)(orbitsParametersPanel.semimajorAxisValue*1000));
+					}
+					
+				}	
+					
+			} catch (SQLException | ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+			finally {
+				if (conn!= null){
+					try {
+						conn.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+	}
 	
-    public static void main(String[] a) {
-    	MainFrame frame = new MainFrame();
-    	frame.setVisible(true);
-    	frame.splitPane.setDividerLocation(0.66);
+};
+KeyListener escape = new KeyListener() {
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		
+	    int key = e.getKeyCode();
+	
+	    if(key == KeyEvent.VK_LEFT)
+	    {
+	    	System.out.println("escape");
+	    }
+	}
+};
 
-    	frame.splitPane.setDividerLocation(0.66);  
-    	
-    	
-  }
+public static void main(String[] args) {
+	SwingUtilities.invokeLater(new Runnable() {
+		
+		@Override
+		public void run() {
+			MainFrame f = new MainFrame();
+			f.setVisible(true);
+			f.splitPane.setDividerLocation(0.66);
+		}
+	});
+
+}
+	
+    
 } 
