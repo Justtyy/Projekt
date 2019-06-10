@@ -28,6 +28,8 @@ import java.util.concurrent.Executors;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import pl.edu.pw.fizyka.pojava.Kierznowska_Kurek.MainFrame.SimulationtThread;
+
 
 
 
@@ -56,7 +58,7 @@ public class MainFrame extends JFrame {
 	Border blackLine, grayLine;
 	SimulationField simulationField;
 	int counter=0;
-	boolean click;
+	boolean click=true;
 	
 	 long time_start, time_stop;
 	
@@ -197,6 +199,7 @@ public class MainFrame extends JFrame {
 					click=false;
 					try {
 						simulationThread.join();
+						simulationField.clearPanel();
 					} catch (InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -207,13 +210,15 @@ public class MainFrame extends JFrame {
 				else if(counter>1 && counter%2!=0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
 					click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
 					simulationThread.start();
+					repaint();
 				}
 			}
 			
 		};
 		class SimulationtThread extends Thread{
-			public void run() {
-				if(click==true) {
+		
+				public void run() {
+				
 					panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
 					panelWidth = simulationActionPanel.getWidth();//to też
 					orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
@@ -222,9 +227,19 @@ public class MainFrame extends JFrame {
 					ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
 					exec.execute(simulationField);
 					exec.shutdown();
-					startStopButton.setText("Stop");
+					startStopButton.setText("Wyczyść dane");
 					repaint();
-					}			
+					
+					while(click = false) {
+						try {
+							sleep(200);
+							startStopButton.setText("Start");
+							repaint();
+						}catch(InterruptedException e){
+						
+						}	
+					}
+				
 				}
 			}
 //	ActionListener startStopButtonActionListener = new ActionListener() {

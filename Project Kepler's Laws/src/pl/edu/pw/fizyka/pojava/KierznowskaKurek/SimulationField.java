@@ -2,6 +2,10 @@ package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+
 import javax.swing.JPanel;
 
 
@@ -71,5 +75,10 @@ public class SimulationField extends JPanel implements Runnable{
 		
 		}
 	
+	}
+	public void clearPanel(){
+	
+		orbit = null;
+
 	}
 }
