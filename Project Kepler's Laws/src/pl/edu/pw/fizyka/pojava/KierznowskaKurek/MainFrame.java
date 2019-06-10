@@ -58,12 +58,9 @@ public class MainFrame extends JFrame {
 	Language language;
 	int counter=0;
 	boolean click=true;
-	
-	
 	long time_start, time_stop;
 		
 	Connection conn = null;
-
 
 	public MainFrame() throws HeadlessException {
 
@@ -73,7 +70,6 @@ public class MainFrame extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		this.addKeyListener(Escape);
 		 
 		//border lines
 		blackLine = BorderFactory.createLineBorder(Color.black);
@@ -97,8 +93,10 @@ public class MainFrame extends JFrame {
 		leftPanel.add(topPanel, BorderLayout.PAGE_START);
 		topPanel.setBorder(blackLine);
 		topPanel.setLayout(new FlowLayout());
+		
 		topPanel.add(savePlanet = new JButton(language.text.getString("save")));
 		savePlanet.addActionListener(SaveFileListener);
+		
 		topPanel.add(languageLabel = new JLabel(language.text.getString("language")));
 		topPanel.add(polish = new JRadioButton(language.text.getString("pl")));
 		topPanel.add(english = new JRadioButton(language.text.getString("en")));
@@ -115,7 +113,6 @@ public class MainFrame extends JFrame {
 		settingsPanel.add(choosePlanetPanel = new JPanel(), BorderLayout.PAGE_START);
 		settingsPanel.add(settingsCenterPanel = new JPanel(), BorderLayout.CENTER);
 		settingsPanel.add(animationsActionsPanel = new JPanel(), BorderLayout.PAGE_END);
-		
 		
 		//Choose planet from list
 		choosePlanetPanel.setPreferredSize(new Dimension(100, 50));
@@ -161,7 +158,6 @@ public class MainFrame extends JFrame {
 		showAxis.addActionListener(showAxisListener);
 		showOrbit.addActionListener(showOrbitListener);
 
-
 		//List with colors and motives 
 		colorList = new JComboBox(colorStrings);
 		colorList.setSelectedIndex(0);
@@ -170,10 +166,10 @@ public class MainFrame extends JFrame {
 		colorListPanel.add(okColorButton = new JButton("OK"));
 		okColorButton.setToolTipText(language.text.getString("confirmTheme"));
 		okColorButton.addActionListener(chooseMotive);
+		
 		okPlanetButton.addActionListener(OpenPlanetBase);
-
+		
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
-
 	    startStopButton.addActionListener(distanceToSunListener);
 	    startStopButton.addMouseListener(mouseClickCounterListener);
 	    
@@ -240,7 +236,7 @@ public class MainFrame extends JFrame {
 			exec.execute(simulationField);
 			exec.shutdown();
 		
-			startStopButton.setText("Wyczyść dane");
+			startStopButton.setText("Stop");
 			repaint();
 				
 
@@ -494,12 +490,12 @@ public class MainFrame extends JFrame {
 		}
 	};
 	
+	//Justyna Kurek
 	ActionListener OpenPlanetBase = new ActionListener() {
 		public void actionPerformed(ActionEvent g) {
 		String chosenPlanet = (String) planetList.getSelectedItem();
 				try {
 					int planet = planetList.getSelectedIndex();
-					//System.out.println(""+planet);
 					if(planet==0) {
 						System.out.println("Nie wybrano planety");
 					}
@@ -548,41 +544,12 @@ public class MainFrame extends JFrame {
 		
 	};
 	
-	KeyListener Escape = new KeyListener() {
-		
-		@Override
-		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void keyPressed(KeyEvent e) {
-			
-		    int key = e.getKeyCode();
-		
-		    if(key == KeyEvent.VK_ESCAPE);
-		    {
-		    	System.out.println("escape");
-		    	System.exit(0);
-		    }
-		}
-	};
-	
-	
-	
+	//Justyna Kurek
 	ActionListener SaveFileListener = new ActionListener() {
 		public void actionPerformed(ActionEvent g) {
 			JFileChooser chooser = new JFileChooser("Wybierz plik");
 			int result = chooser.showDialog(null, "Wybierz");
 			File fileToSave;
-			//modifiedText = "";
 			if(JFileChooser.APPROVE_OPTION==result) {
 				System.out.println("Wybrano plik: "+ chooser.getSelectedFile().toPath());
 				fileToSave = chooser.getSelectedFile();
@@ -606,6 +573,7 @@ public class MainFrame extends JFrame {
 		}
 	};
 	
+	//Anna Kierznowska
 	ActionListener plLanguageListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -613,6 +581,7 @@ public class MainFrame extends JFrame {
 		}
 	};
 	
+	//Anna Kierznowska
 	ActionListener enLanguageListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {			
@@ -620,6 +589,7 @@ public class MainFrame extends JFrame {
 		}
 	};
 	
+	//Anna Kierznowska
 	public void changeLanguage(int i) {
 		if(i == 1) {
 			language.locale.setDefault(new Locale("pl","PL"));
