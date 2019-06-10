@@ -1,9 +1,8 @@
 package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
+
 
 public class Orbit {
 	double semimajorAxis;

@@ -6,6 +6,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.Scanner;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -22,7 +28,12 @@ import java.util.concurrent.Executors;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+
+
+
 public class MainFrame extends JFrame {
+	
+	
 	
 	Orbit orbit;
 	int panelHeight, panelWidth;
@@ -47,6 +58,8 @@ public class MainFrame extends JFrame {
 	int counter=0;
 	boolean click;
 	
+	 long time_start, time_stop;
+	
 	Connection conn = null;
 	
 	public MainFrame() throws HeadlessException {
@@ -57,6 +70,7 @@ public class MainFrame extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
+		this.addKeyListener(Escape);
 		//border lines
 		blackLine = BorderFactory.createLineBorder(Color.black);
 		grayLine = BorderFactory.createLineBorder(Color.gray, 3);
@@ -74,8 +88,9 @@ public class MainFrame extends JFrame {
 		
 		leftPanel.add(topPanel, BorderLayout.PAGE_START);
 		topPanel.setBorder(blackLine);
-		topPanel.setLayout(new FlowLayout());
+		topPanel.setLayout(new FlowLayout());		
 		topPanel.add(savePlanet = new JButton("Zapisz własną planetę"));
+		savePlanet.addActionListener(SaveFileListener);
 		topPanel.add(language = new JLabel("Wybór języka:"));
 		topPanel.add(polish = new JRadioButton("polski"));
 		topPanel.add(english = new JRadioButton("angielski"));
@@ -151,55 +166,82 @@ public class MainFrame extends JFrame {
 		
 	    startStopButton.addActionListener(distanceToSunListener);
 	    startStopButton.addMouseListener(mouseClickCounterListener);
-	    this.addKeyListener(escape);
 	} 
-	MouseListener mouseClickCounterListener = new MouseListener() {
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-		}
-		@Override
-		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub	
-		}
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub	
-		}
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub	
-		}
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			counter++;
-
-			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
-			panelWidth = simulationActionPanel.getWidth();//to też
-			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
-			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
-			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
-			//ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
-			Thread thread = new Thread(simulationField);
+	
+		MouseListener mouseClickCounterListener = new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub	
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub	
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub	
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				counter++;
+				SimulationtThread simulationThread = new SimulationtThread(); 
+				if(counter==1) {
+					click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
+					simulationThread.start();
+				}
+				else if(counter>1 && counter%2==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
+					click=false;
+					try {
+						simulationThread.join();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					startStopButton.setText("Start");
+					repaint();
+				}
+				else if(counter>1 && counter%2!=0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
+					click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
+					simulationThread.start();
+				}
+			}
 			
-			if(counter ==1) {
-				
-				startStopButton.setText("Stop");
-				thread.start();
+		};
+		class SimulationtThread extends Thread{
+			public void run() {
+				if(click==true) {
+					panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
+					panelWidth = simulationActionPanel.getWidth();//to też
+					orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
+					simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
+					simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+					ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
+					exec.execute(simulationField);
+					exec.shutdown();
+					startStopButton.setText("Stop");
+					repaint();
+					}			
+				}
 			}
-			else if(counter>1 && (counter%2)==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
-			
-				startStopButton.setText("Start");
-				thread.suspend();	
-			}
-			else if(counter>1 && counter%2!=0) {//jesli nieparzysta to na przycisku musi byc "stop" i symulacja jest uruchomiona
-				
-				startStopButton.setText("Stop");
-				thread.resume();
-			}
-				
-		}
-	};
+//	ActionListener startStopButtonActionListener = new ActionListener() {
+//		@Override
+//		public void actionPerformed(ActionEvent e) {
+//			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
+//			panelWidth = simulationActionPanel.getWidth();//to też
+//			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
+//			simulationField = new SimulationsField(orbit);//tu jest komponent do rysowania
+//			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+//			ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
+//			exec.execute(simulationField);
+//			exec.shutdown();
+//
+//			repaint();
+//		}
+//	};
 	
 
 	//actionlistener ustawiajacy odleglosci planety od Słońca, dodany do startStopButton
@@ -490,7 +532,7 @@ ActionListener OpenPlanetBase = new ActionListener() {
 	}
 	
 };
-KeyListener escape = new KeyListener() {
+KeyListener Escape = new KeyListener() {
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -509,13 +551,115 @@ KeyListener escape = new KeyListener() {
 		
 	    int key = e.getKeyCode();
 	
-	    if(key == KeyEvent.VK_LEFT)
+	    if(key == KeyEvent.VK_ESCAPE);
 	    {
 	    	System.out.println("escape");
+	    	System.exit(0);
 	    }
 	}
 };
 
+ActionListener ReadFileListener = new ActionListener() {
+	public void actionPerformed(ActionEvent g) {
+		JFileChooser chooser = new JFileChooser("Wybierz plik");
+		int result = chooser.showDialog(null, "Wybierz");
+		///originalText = "";
+		String tekstDoUzupelnienia = "";
+		if(JFileChooser.APPROVE_OPTION==result) {
+			System.out.println("Wybrano plik: "+ chooser.getSelectedFile().toPath());
+			File fileToRead = chooser.getSelectedFile();
+			int value = 0;
+			 String[] results = null;
+			
+				try {
+					
+						Scanner scanner = new Scanner(fileToRead);
+						String data;
+						while(scanner.hasNextLine()) {
+							data = scanner.nextLine();
+						System.out.print(data);
+								
+							}
+						scanner.close();
+					//	System.out.println("arabes"+results[1]);
+						
+//						String line = scanner.nextLine();
+//						Double ecc = scanner.nextDouble();
+//						//String line2 = scanner.nextLine();
+//						//float semimajor = scanner.nextFloat();
+//						System.out.println(line+ "  "+ecc);
+//						System.out.println("line2"+ "  "+semimajor);
+//						if(line == "Eccentricity:") {
+//							//String ecc = scanner.nextLine();
+//							orbitsParametersPanel.eccentricityValue =Double.valueOf(scanner.nextLine());
+//							orbitsParametersPanel.eccentricityValueSlider.setValue((int) (orbitsParametersPanel.eccentricityValue*1000));
+//
+//							System.out.println("ecc "+orbitsParametersPanel.eccentricityValue);
+//						}
+//						InputStreamReader isr = new InputStreamReader(
+//							new FileInputStream(fileToRead));
+//							//Charset.forName("UTF-8").newDecoder());
+//							BufferedReader bfr = new BufferedReader(isr);
+//							StringBuffer buffer1 = new StringBuffer();
+//							
+							
+							
+//						while ((originalText = bfr.readLine()) != null) {
+//							originalBuffer.append(originalText);
+//							tekstDoUzupelnienia = originalText.replace("ż", "?");
+//							tekstDoUzupelnienia = tekstDoUzupelnienia.replace("rz", "?");
+//							tekstDoUzupelnienia = tekstDoUzupelnienia.replace("ó", "?");
+//							tekstDoUzupelnienia = tekstDoUzupelnienia.replace("u", "?");
+//							tekstDoUzupelnienia = tekstDoUzupelnienia.replace("h", "?");
+//							tekstDoUzupelnienia = tekstDoUzupelnienia.replace("ch", "?");
+//						
+//							buffer1.append(tekstDoUzupelnienia);	
+//						
+//						editorPane.setText(buffer1.toString());
+
+//}
+					scanner.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+		}
+		else {
+			System.out.println("Nie wybrano pliku");
+		}
+	}	
+};
+
+
+ActionListener SaveFileListener = new ActionListener() {
+	public void actionPerformed(ActionEvent g) {
+		JFileChooser chooser = new JFileChooser("Wybierz plik");
+		int result = chooser.showDialog(null, "Wybierz");
+		File fileToSave;
+		//modifiedText = "";
+		if(JFileChooser.APPROVE_OPTION==result) {
+			System.out.println("Wybrano plik: "+ chooser.getSelectedFile().toPath());
+			fileToSave = chooser.getSelectedFile();
+			try {
+				OutputStreamWriter osr = new OutputStreamWriter(
+					new FileOutputStream(fileToSave));					
+					BufferedWriter bfr = new BufferedWriter(osr);
+					bfr.write("Eccentricity: "+(orbitsParametersPanel.eccentricityValue/1000)+"AU, semimajor axis: "+(orbitsParametersPanel.semimajorAxisValue/1000)
+							+"AU, semiminor axis: "+orbitsParametersPanel.semiminorAxisValue);
+					
+					bfr.close();
+}
+			 catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+}
+		else {
+			System.out.println("Nie wybrano pliku");
+		}
+	}
+};
 public static void main(String[] args) {
 	SwingUtilities.invokeLater(new Runnable() {
 		
@@ -529,5 +673,7 @@ public static void main(String[] args) {
 
 }
 	
+    
+
     
 } 

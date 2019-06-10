@@ -1,6 +1,5 @@
 package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -8,6 +7,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+
 
 public class SpecialLayoutWithSlidersPanel extends JPanel{
 	static double eccentricityValue = 0;
@@ -159,4 +159,8 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
 		return semiminorAxisValue;
 	}
 	
-}  
+
+	}
+	    
+	
+
