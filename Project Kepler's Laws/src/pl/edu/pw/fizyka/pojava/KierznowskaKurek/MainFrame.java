@@ -46,7 +46,7 @@ public class MainFrame extends JFrame {
 	SpecialLayoutWithSlidersPanel orbitsParametersPanel;
 	JPanel distanceLabelPanel, maxDistancePanel, minDistancePanel;
 	final JSplitPane splitPane;
-	JButton openFile, savePlanet, startStopButton;
+	JButton savePlanet, startStopButton;
 	JLabel languageLabel, distanceLabel, minDistanceLabel, maxDistanceLabel;//labels
 	JRadioButton polish, english;
 	JComboBox planetList, colorList;
@@ -57,12 +57,12 @@ public class MainFrame extends JFrame {
 	SimulationField simulationField;
 	Language language;
 	int counter=0;
-	boolean click;
-	boolean restart;
+	boolean click=true;
 	
-	 long time_start, time_stop;
+	
+	long time_start, time_stop;
 		
-		Connection conn = null;
+	Connection conn = null;
 
 
 	public MainFrame() throws HeadlessException {
@@ -73,7 +73,7 @@ public class MainFrame extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-		
+		this.addKeyListener(Escape);
 		 
 		//border lines
 		blackLine = BorderFactory.createLineBorder(Color.black);
@@ -97,8 +97,6 @@ public class MainFrame extends JFrame {
 		leftPanel.add(topPanel, BorderLayout.PAGE_START);
 		topPanel.setBorder(blackLine);
 		topPanel.setLayout(new FlowLayout());
-		topPanel.add(openFile = new JButton(language.text.getString("open")));
-		openFile.addActionListener(ReadFileListener);
 		topPanel.add(savePlanet = new JButton(language.text.getString("save")));
 		savePlanet.addActionListener(SaveFileListener);
 		topPanel.add(languageLabel = new JLabel(language.text.getString("language")));
@@ -204,53 +202,60 @@ public class MainFrame extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			counter++;
-			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
-			panelWidth = simulationActionPanel.getWidth();//to też
-			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
-			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
-			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
-			//ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
-			Thread thread = new Thread(simulationField);
-			
-			if(counter ==1) {
-			
-				startStopButton.setText("Stop");
-				thread.start();
+			SimulationtThread simulationThread = new SimulationtThread(); 
+			if(counter==1) {
+				click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
+				simulationThread.start();
 			}
-			else if(counter>1 && (counter%2)==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
-			
-				
-				startStopButton.setText("Start");
-				//int time = (int) ((time_stop - time_start));
+			else if(counter>1 && counter%2==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
+				click=false;
 				try {
-					thread.sleep(1000);
+					simulationThread.join();
+					simulationField.clearPanel();
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
+				startStopButton.setText("Start");
+				repaint();
 			}
-				
+			else if(counter>1 && counter%2!=0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
+				click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
+				simulationThread.start();
+				repaint();
+			}
 		}
 	};
 	
 	//Anna Kierznowska
 	class SimulationtThread extends Thread{
 		public void run() {
-			if(click==true) {
-				panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
-				panelWidth = simulationActionPanel.getWidth();//to też
-				orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
-				simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
-				simulationActionPanel.add(simulationField, BorderLayout.CENTER);
-				ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
-				exec.execute(simulationField);
-				exec.shutdown();
-				startStopButton.setText("Stop");
-				repaint();
-				}			
+
+			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
+			panelWidth = simulationActionPanel.getWidth();//to też
+			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
+			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
+			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
+			ExecutorService exec = Executors.newFixedThreadPool(1);//to sprawia że planeta się porusza
+			exec.execute(simulationField);
+			exec.shutdown();
+		
+			startStopButton.setText("Wyczyść dane");
+			repaint();
+				
+
+			while(click = false) {
+				try {
+					sleep(200);
+					startStopButton.setText("Start");
+					repaint();
+				}catch(InterruptedException e){
+
+				}	
 			}
+
 		}
+	}
 
 	//Justyna Kurek
 	//actionlistener ustawiajacy odleglosci planety od Słońca, dodany do startStopButton
@@ -570,36 +575,7 @@ public class MainFrame extends JFrame {
 		}
 	};
 	
-	ActionListener ReadFileListener = new ActionListener() {
-		public void actionPerformed(ActionEvent g) {
-			try {
-				JFileChooser chooser = new JFileChooser();
-				chooser.showDialog(null, "Wybierz");
-				FileReader in = new FileReader(chooser.getSelectedFile());
-				int c;
-				 while ((c = in.read()) != -1) { // jeżeli c = -1 to koniec pliku
-		                System.out.print((char)c);
-		            }
-//				BufferedReader buffIn = new BufferedReader(in);
-//				String line;
-//				char[] litery = null;
-//				while ((line = buffIn.readLine()) != null) {
-//						litery = line.toCharArray();
-//						
-//					}
-//					
-//					String nowyText = new String (litery);
-//				while(nowyText == "/t") {
-//					System.out.println(nowyText);
-//				}
-//				
-				in.close();
-				}catch(IOException exc) {
-				exc.printStackTrace();
-			}
-			
-		}
-	};
+	
 	
 	ActionListener SaveFileListener = new ActionListener() {
 		public void actionPerformed(ActionEvent g) {
@@ -671,15 +647,6 @@ public class MainFrame extends JFrame {
 			}
 		});
   }
-
-
-	
-
-	
-
-
-
-
 
 	
 }  

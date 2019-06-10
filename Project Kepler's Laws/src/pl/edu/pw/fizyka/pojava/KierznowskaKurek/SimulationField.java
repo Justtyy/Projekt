@@ -18,13 +18,14 @@ public class SimulationField extends JPanel implements Runnable{
 		orbit = o;
 	}
 	  public void paintComponent(Graphics g) {
+		  
 		  super.paintComponent(g); 
 	        orbit.paint(g);
 	        Color defaultPlanetColor = new Color(142, 10, 70);
 	        g.setColor(defaultPlanetColor);
 	        g.setColor(planetColor);
 	        g.fillOval(intPlanetX, intPlanetY, 10, 10);
-
+		 
 	  }
 	  
 	  public void planetMove() {
@@ -69,6 +70,11 @@ public class SimulationField extends JPanel implements Runnable{
 				}
 
 			}
+
+		}
+		public void clearPanel(){
+
+			orbit = null;
 
 		}
 	} 
