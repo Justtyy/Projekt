@@ -2,10 +2,14 @@ package pl.edu.pw.fizyka.pojava.KierznowskaKurek;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,18 +29,19 @@ public class MainFrame extends JFrame {
 	JPanel distanceLabelPanel, maxDistancePanel, minDistancePanel;
 	final JSplitPane splitPane;
 	JButton savePlanet, startStopButton;
-	JLabel language, distanceLabel, minDistanceLabel, maxDistanceLabel;//labels
+	JLabel languageLabel, distanceLabel, minDistanceLabel, maxDistanceLabel;//labels
 	JRadioButton polish, english;
-	String[] planetStrings = {"Wybierz planetę", "Merkury","Wenus", "Ziemia", "Mars", "Jowisz", "Saturn", "Uran", "Neptun"};
-	String[] colorStrings = {"Wybierz motyw symulacji", "Dzień", "Noc"};
 	JComboBox planetList, colorList;
 	JButton okPlanetButton, okColorButton;
 	JCheckBox showOrbit, showAxis;
 	JLabel minDistanceToSun, maxDistanceToSun;//values
 	Border blackLine, grayLine;
 	SimulationField simulationField;
+	Language language;
 	int counter=0;
 	boolean click;
+	boolean restart;
+
 
 	public MainFrame() throws HeadlessException {
 
@@ -46,9 +51,16 @@ public class MainFrame extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
+		
+		 
 		//border lines
 		blackLine = BorderFactory.createLineBorder(Color.black);
 		grayLine = BorderFactory.createLineBorder(Color.gray, 3);
+		
+		language = new Language();
+		
+		String[] planetStrings = {language.text.getString("choosePlanet"), language.text.getString("mercury"),language.text.getString("venus"), language.text.getString("earth"), language.text.getString("mars"), language.text.getString("jupiter"), language.text.getString("saturn"), language.text.getString("uranus"), language.text.getString("neptune")};
+		String[] colorStrings = {language.text.getString("simulationTheme"), language.text.getString("day"), language.text.getString("night")};
 		
 		leftPanel = new JPanel();
 		topPanel= new JPanel();
@@ -63,13 +75,16 @@ public class MainFrame extends JFrame {
 		leftPanel.add(topPanel, BorderLayout.PAGE_START);
 		topPanel.setBorder(blackLine);
 		topPanel.setLayout(new FlowLayout());
-		topPanel.add(savePlanet = new JButton("Zapisz własną planetę"));
-		topPanel.add(language = new JLabel("Wybór języka:"));
-		topPanel.add(polish = new JRadioButton("polski"));
-		topPanel.add(english = new JRadioButton("angielski"));
+		topPanel.add(savePlanet = new JButton(language.text.getString("save")));
+		topPanel.add(languageLabel = new JLabel(language.text.getString("language")));
+		topPanel.add(polish = new JRadioButton(language.text.getString("pl")));
+		topPanel.add(english = new JRadioButton(language.text.getString("en")));
+		english.addActionListener(enLanguageListener);
+		polish.addActionListener(plLanguageListener);
 		ButtonGroup group = new ButtonGroup();
 		group.add(polish);
 		group.add(english);
+		
 		leftPanel.add(simulationActionPanel = new JPanel());
 		simulationActionPanel.setBorder(grayLine);
 		simulationActionPanel.setLayout(new BorderLayout());
@@ -78,13 +93,15 @@ public class MainFrame extends JFrame {
 		settingsPanel.add(settingsCenterPanel = new JPanel(), BorderLayout.CENTER);
 		settingsPanel.add(animationsActionsPanel = new JPanel(), BorderLayout.PAGE_END);
 		
+		
 		//Choose planet from list
 		choosePlanetPanel.setPreferredSize(new Dimension(100, 50));
+		
 		planetList = new JComboBox(planetStrings);
 		planetList.setSelectedIndex(0);
 		choosePlanetPanel.add(planetList);
 		choosePlanetPanel.add(okPlanetButton = new JButton("OK"));
-		okPlanetButton.setToolTipText("Potwierdz wybór planety");
+		okPlanetButton.setToolTipText(language.text.getString("confirmChoice"));
 		
 		settingsCenterPanel.setLayout(new GridLayout(2,1));
 		//SpecialLayoutWithSlidersPanel - contains orbit's parameters, like semiminor and semimajor axis and eccentricity
@@ -99,14 +116,14 @@ public class MainFrame extends JFrame {
 		distanceToSunPanel.add(maxDistancePanel = new JPanel());
 		distanceToSunPanel.add(minDistancePanel = new JPanel());
 		
-		distanceLabelPanel.add(distanceLabel = new JLabel("Odległość od Słońca:"));
+		distanceLabelPanel.add(distanceLabel = new JLabel(language.text.getString("sun")+":"));
 		distanceLabel.setFont(new Font("SansSerif", Font.BOLD, 15));
-		maxDistancePanel.add(maxDistanceLabel = new JLabel("Maksymalna:"));
+		maxDistancePanel.add(maxDistanceLabel = new JLabel(language.text.getString("max")+":"));
 		maxDistancePanel.add(maxDistanceToSun = new JLabel());
 		maxDistanceToSun.setPreferredSize(new Dimension(100, 20));
 		maxDistanceToSun.setBackground(Color.white);
 		maxDistanceToSun.setOpaque(true);
-		minDistancePanel.add(minDistanceLabel = new JLabel("Minimalna:"));
+		minDistancePanel.add(minDistanceLabel = new JLabel(language.text.getString("min")+":"));
 		minDistancePanel.add(minDistanceToSun = new JLabel());
 		minDistanceToSun.setPreferredSize(new Dimension(100, 20));
 		minDistanceToSun.setBackground(Color.white);
@@ -116,8 +133,8 @@ public class MainFrame extends JFrame {
 		animationsActionsPanel.setLayout(new GridLayout(3,1));
 		animationsActionsPanel.setPreferredSize(new Dimension(100, 160));
 		animationsActionsPanel.add(checkBoxPanel = new JPanel());
-		checkBoxPanel.add(showOrbit = new JCheckBox("Wyświetl orbitę"));
-		checkBoxPanel.add(showAxis = new JCheckBox("Wyświetl osie elipsy"));
+		checkBoxPanel.add(showOrbit = new JCheckBox(language.text.getString("orbit")));
+		checkBoxPanel.add(showAxis = new JCheckBox(language.text.getString("axis")));
 		showAxis.addActionListener(showAxisListener);
 		showOrbit.addActionListener(showOrbitListener);
 
@@ -128,13 +145,15 @@ public class MainFrame extends JFrame {
 		animationsActionsPanel.add(colorListPanel = new JPanel());
 		colorListPanel.add(colorList); 
 		colorListPanel.add(okColorButton = new JButton("OK"));
-		okColorButton.setToolTipText("Potwierdz wybór motywu animacji");
+		okColorButton.setToolTipText(language.text.getString("confirmTheme"));
 		okColorButton.addActionListener(chooseMotive);
 
 		animationsActionsPanel.add(startStopButton = new JButton("START/STOP"));
 
 	    startStopButton.addActionListener(distanceToSunListener);
 	    startStopButton.addMouseListener(mouseClickCounterListener);
+	    
+	   
 	} 
 
 	//Justyna Kurek
@@ -245,6 +264,7 @@ public class MainFrame extends JFrame {
 		}
 	};
 	
+	
 	//Justyna Kurek
 	ActionListener chooseMotive = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -264,7 +284,7 @@ public class MainFrame extends JFrame {
 				Color dayMotive = new Color(14,41,75);
 				savePlanet.setBackground(Color.white);
 				savePlanet.setForeground(dayMotive);
-				language.setForeground(dayMotive);
+				languageLabel.setForeground(dayMotive);
 				startStopButton.setBackground(Color.white);
 				startStopButton.setForeground(dayMotive);
 				polish.setBackground(Color.white);
@@ -324,7 +344,7 @@ public class MainFrame extends JFrame {
 				
 				savePlanet.setBackground(Color.black);
 				savePlanet.setForeground(Color.white);
-				language.setForeground(Color.white);
+				languageLabel.setForeground(Color.white);
 				startStopButton.setBackground(Color.black);
 				startStopButton.setForeground(Color.white);
 				polish.setBackground(Color.black);
@@ -384,7 +404,7 @@ public class MainFrame extends JFrame {
 				simulationField.setBackground(defaultMotive);
 				savePlanet.setBackground(defaultMotive);
 				savePlanet.setForeground(Color.black);
-				language.setForeground(Color.black);
+				languageLabel.setForeground(Color.black);
 				startStopButton.setBackground(defaultMotive);
 				startStopButton.setForeground(Color.black);
 				polish.setBackground(defaultMotive);
@@ -432,14 +452,56 @@ public class MainFrame extends JFrame {
 		}
 	};
 	
+	ActionListener plLanguageListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			changeLanguage(1);
+		}
+	};
+	
+	ActionListener enLanguageListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {			
+			changeLanguage(2);
+		}
+	};
+	
+	public void changeLanguage(int i) {
+		if(i == 1) {
+			language.locale.setDefault(new Locale("pl","PL"));
+			MainFrame plFrame = new MainFrame();
+			plFrame.setVisible(true);
+			plFrame.splitPane.setDividerLocation(0.66); 
+			this.setVisible(false);
+		}
+		
+		if(i == 2) {
+			language.locale.setDefault(new Locale("en","GB"));
+			MainFrame plFrame = new MainFrame();
+			plFrame.setVisible(true);
+			plFrame.splitPane.setDividerLocation(0.66); 
+			this.setVisible(false);
+		}
+	}
+	
     public static void main(String[] a) {
     	SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				MainFrame frame = new MainFrame();
-		    	frame.setVisible(true);
-		    	frame.splitPane.setDividerLocation(0.66);  
+				frame.setVisible(true);
+				frame.splitPane.setDividerLocation(0.66); 
 			}
 		});
   }
+
+
+	
+
+	
+
+
+
+
+
+	
 }  
-    
