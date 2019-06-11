@@ -34,9 +34,6 @@ public class SpecialLayoutWithSlidersPanel extends JPanel{
         gridBagConstraints.weighty = 1;//request any extra horizontal space
         this.add(orbitsParametersLabel, gridBagConstraints);  
         
-       
-      //  lang.locale.setDefault(new Locale("en", "GB"));
-        
         semiminorAxisValueField = new JLabel("0.1AU");//etykieta z wartoscia malej polosi, uzupelniona pozniej(w sliderach na biezaco)
         semiminorAxisValueField.setPreferredSize(new Dimension(100, 20));
         semiminorAxisValueField.setBackground(Color.white);

@@ -64,14 +64,14 @@ public class MainFrame extends JFrame {
 
 	public MainFrame() throws HeadlessException {
 
-		//main frame settings
+		//ustawienia głównej ramki
 		super("Prawa Keplera");
 		this.setSize(1000,600);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 		 
-		//border lines
+		//linie graniczne - ramka
 		blackLine = BorderFactory.createLineBorder(Color.black);
 		grayLine = BorderFactory.createLineBorder(Color.gray, 3);
 		
@@ -114,7 +114,7 @@ public class MainFrame extends JFrame {
 		settingsPanel.add(settingsCenterPanel = new JPanel(), BorderLayout.CENTER);
 		settingsPanel.add(animationsActionsPanel = new JPanel(), BorderLayout.PAGE_END);
 		
-		//Choose planet from list
+		//Wybór planety z listy
 		choosePlanetPanel.setPreferredSize(new Dimension(100, 50));
 		
 		planetList = new JComboBox(planetStrings);
@@ -124,12 +124,12 @@ public class MainFrame extends JFrame {
 		okPlanetButton.setToolTipText(language.text.getString("confirmChoice"));
 		
 		settingsCenterPanel.setLayout(new GridLayout(2,1));
-		//SpecialLayoutWithSlidersPanel - contains orbit's parameters, like semiminor and semimajor axis and eccentricity
+		//SpecialLayoutWithSlidersPanel - zawiera parametry orbity -wartości  wielkiej i małej półosi oraz mimośrodu
 		settingsCenterPanel.add(orbitsParametersPanel = new SpecialLayoutWithSlidersPanel());
 		//eccentricity = SpecialLayoutWithSlidersPanel.giveEccentricity();
 		orbitsParametersPanel.setPreferredSize(new Dimension(100, 120));
 
-		//Settings about maximum and minimum distance from the Sun
+		//Ustawienia odległości minimalnej i maksymalnej planety od Słońca
 		settingsCenterPanel.add(distanceToSunPanel = new JPanel());
 		distanceToSunPanel.setLayout(new GridLayout(3,2));
 		distanceToSunPanel.add(distanceLabelPanel = new JPanel());
@@ -149,7 +149,7 @@ public class MainFrame extends JFrame {
 		minDistanceToSun.setBackground(Color.white);
 		minDistanceToSun.setOpaque(true);
 		
-		//Radio buttons about which elements user want to see
+		//Radiobuttony służące do zaznaczania i odznaczania widoczności toru ruchu planety i osi symetrii
 		animationsActionsPanel.setLayout(new GridLayout(3,1));
 		animationsActionsPanel.setPreferredSize(new Dimension(100, 160));
 		animationsActionsPanel.add(checkBoxPanel = new JPanel());
@@ -158,7 +158,7 @@ public class MainFrame extends JFrame {
 		showAxis.addActionListener(showAxisListener);
 		showOrbit.addActionListener(showOrbitListener);
 
-		//List with colors and motives 
+		//Lista do wyboru motywu symulacji
 		colorList = new JComboBox(colorStrings);
 		colorList.setSelectedIndex(0);
 		animationsActionsPanel.add(colorListPanel = new JPanel());
@@ -177,6 +177,7 @@ public class MainFrame extends JFrame {
 	} 
 
 	//Justyna Kurek
+	//Listener służący do zliczania kliknięć z przycisku odpowiadającego za start i wstrzymanie symulacji i dodawanie do niego akcji w zależności od wartości countera
 	MouseListener mouseClickCounterListener = new MouseListener() {
 
 		@Override
@@ -200,10 +201,10 @@ public class MainFrame extends JFrame {
 			counter++;
 			SimulationtThread simulationThread = new SimulationtThread(); 
 			if(counter==1) {
-				click=true;//jesli nieparzysta, to na przycisku "stop" i symulacja powinna dzialac
+				click=true;//początek symulacji - jesli licznik nieparzysty, to na przycisku "stop" i symulacja powinna dzialac
 				simulationThread.start();
 			}
-			else if(counter>1 && counter%2==0) {//jesli parzysta to na przycisku musi byc "start" i symulacja powinna pauzowac
+			else if(counter>1 && counter%2==0) {//jesli parzysty to na przycisku musi byc "start" i symulacja powinna pauzowac
 				click=false;
 				try {
 					simulationThread.join();
@@ -228,7 +229,7 @@ public class MainFrame extends JFrame {
 		public void run() {
 
 			panelHeight = simulationActionPanel.getHeight();//potrzebne żeby rysowało się na środku panelu
-			panelWidth = simulationActionPanel.getWidth();//to też
+			panelWidth = simulationActionPanel.getWidth();
 			orbit = new Orbit(SpecialLayoutWithSlidersPanel.giveSemimajorAxis(), SpecialLayoutWithSlidersPanel.giveSemiminorAxis(), SpecialLayoutWithSlidersPanel.giveEccentricity(), panelHeight, panelWidth);
 			simulationField = new SimulationField(orbit);//tu jest komponent do rysowania
 			simulationActionPanel.add(simulationField, BorderLayout.CENTER);
@@ -271,6 +272,7 @@ public class MainFrame extends JFrame {
 	};
 	
 	//Anna Kierznowska
+	//Listener odpowiedzialny za pokazywanie się osi symetrii symulacji
 	ActionListener showAxisListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -287,6 +289,7 @@ public class MainFrame extends JFrame {
 	};
 
 	//Anna Kierznowska
+	//Listener odpowiedzialny za pokazywanie się toru ruchu planety
 	ActionListener showOrbitListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -304,6 +307,7 @@ public class MainFrame extends JFrame {
 	
 	
 	//Justyna Kurek
+	//Umożliwia wybór motywu wyświetlania symulacji
 	ActionListener chooseMotive = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			int motive = colorList.getSelectedIndex();
@@ -491,6 +495,7 @@ public class MainFrame extends JFrame {
 	};
 	
 	//Justyna Kurek
+	//Umożliwia połączenie z zewnętrzną bazą danych i pobieranie z niej parametrów dla planet
 	ActionListener OpenPlanetBase = new ActionListener() {
 		public void actionPerformed(ActionEvent g) {
 		String chosenPlanet = (String) planetList.getSelectedItem();
@@ -545,20 +550,21 @@ public class MainFrame extends JFrame {
 	};
 	
 	//Justyna Kurek
+	//Umożliwia zapis wartości charakterystycznych dla danego obiektu - domyślnie planety do pliku tekstowego
 	ActionListener SaveFileListener = new ActionListener() {
 		public void actionPerformed(ActionEvent g) {
-			JFileChooser chooser = new JFileChooser("Wybierz plik");
-			int result = chooser.showDialog(null, "Wybierz");
+			JFileChooser chooser = new JFileChooser(language.text.getString("chooseFile"));
+			int result = chooser.showDialog(null,language.text.getString("choose"));
 			File fileToSave;
 			if(JFileChooser.APPROVE_OPTION==result) {
-				System.out.println("Wybrano plik: "+ chooser.getSelectedFile().toPath());
+				System.out.println(language.text.getString("file")+ chooser.getSelectedFile().toPath());
 				fileToSave = chooser.getSelectedFile();
 				try {
 					OutputStreamWriter osr = new OutputStreamWriter(
 						new FileOutputStream(fileToSave));					
 						BufferedWriter bfr = new BufferedWriter(osr);
-						bfr.write("Eccentricity: "+(orbitsParametersPanel.eccentricityValue/1000)+"AU, semimajor axis: "+(orbitsParametersPanel.semimajorAxisValue/1000)
-								+"AU, semiminor axis: "+orbitsParametersPanel.semiminorAxisValue);
+						bfr.write(language.text.getString("eccentricityValue")+": "+(orbitsParametersPanel.eccentricityValue/1000)+"AU, "+language.text.getString("semimajorAxisValue")+": "+(orbitsParametersPanel.semimajorAxisValue/1000)
+								+"AU, "+language.text.getString("semiminorAxisValue")+": "+orbitsParametersPanel.semiminorAxisValue);
 						
 						bfr.close();
 	}
@@ -574,6 +580,7 @@ public class MainFrame extends JFrame {
 	};
 	
 	//Anna Kierznowska
+	//Umożliwia zmianę języka symulacji na polski
 	ActionListener plLanguageListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -582,6 +589,7 @@ public class MainFrame extends JFrame {
 	};
 	
 	//Anna Kierznowska
+	//Umożliwia zmianę języka na angielski
 	ActionListener enLanguageListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {			
@@ -590,6 +598,7 @@ public class MainFrame extends JFrame {
 	};
 	
 	//Anna Kierznowska
+	//Umożliwia zmianę języka
 	public void changeLanguage(int i) {
 		if(i == 1) {
 			language.locale.setDefault(new Locale("pl","PL"));
